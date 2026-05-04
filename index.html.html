@@ -402,34 +402,74 @@
   <!-- SCAN -->
   <div class="view" id="view-scan">
     <p class="section-title">Scan Invoice</p>
-    <p class="section-sub">Take a photo or upload — AI will read the invoice automatically</p>
+    <p class="section-sub">Upload one or multiple pages — AI will extract all line items</p>
 
-    <!-- Two separate inputs: one forces camera, one forces gallery/files -->
-    <input type="file" id="fileInputCamera" accept="image/*" capture="environment" onchange="handleFile(event)" style="display:none">
-    <input type="file" id="fileInputGallery" accept="image/*" onchange="handleFile(event)" style="display:none">
+    <!-- Image inputs -->
+    <input type="file" id="fileInputCamera" accept="image/*" capture="environment" onchange="addScanFile(event)" style="display:none">
+    <input type="file" id="fileInputGallery" accept="image/*" multiple onchange="addScanFiles(event)" style="display:none">
 
-    <!-- Two buttons side by side -->
+    <!-- Buttons -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
       <button class="camera-btn" onclick="document.getElementById('fileInputCamera').click()">
         <span>📷</span> Take Photo
       </button>
       <button class="camera-btn" style="background:var(--ink)" onclick="document.getElementById('fileInputGallery').click()">
-        <span>🖼</span> Upload Image
+        <span>🖼</span> Upload Images
       </button>
     </div>
 
-    <div class="scan-zone" id="scanZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)" onclick="document.getElementById('fileInputGallery').click()">
-      <div class="scan-icon">🧾</div><div class="scan-title">Drop invoice here</div><div class="scan-hint">Drag & drop or tap to choose from your files or gallery.</div>
+    <!-- Drop zone -->
+    <div class="scan-zone" id="scanZone"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="handleDrop(event)"
+      onclick="document.getElementById('fileInputGallery').click()">
+      <div class="scan-icon">🧾</div>
+      <div class="scan-title">Drop invoice pages here</div>
+      <div class="scan-hint">You can select multiple images at once for large invoices.</div>
     </div>
-    <img id="previewImg" class="preview-img" style="display:none">
+
+    <!-- Image thumbnails preview strip -->
+    <div id="thumbStrip" style="display:none;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:8px">
+        Pages to scan — <span id="thumbCount">0</span>
+      </div>
+      <div id="thumbList" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px"></div>
+      <button class="camera-btn" style="margin-top:10px" onclick="startScan()">
+        <span>🤖</span> Analyze with AI
+      </button>
+    </div>
+
+    <!-- Analyzing overlay -->
     <div class="analyzing-overlay" id="analyzingOverlay">
       <div class="spinner" style="width:28px;height:28px;border-width:3px"></div>
-      <div class="analyzing-text">Reading invoice with AI…</div>
-      <div style="font-size:11px;color:var(--border);margin-top:4px">This takes 5–10 seconds</div>
+      <div class="analyzing-text" id="analyzingText">Reading invoice with AI…</div>
+      <div style="font-size:11px;color:var(--warm-gray);margin-top:4px">This takes 5–15 seconds</div>
     </div>
+
+    <!-- Results -->
     <div class="ai-result" id="aiResult">
-      <div class="ai-result-header"><span class="ai-badge">AI EXTRACTED</span><span class="ai-status" id="aiStatus">Review and confirm below</span></div>
+      <div class="ai-result-header">
+        <span class="ai-badge">AI EXTRACTED</span>
+        <span class="ai-status" id="aiStatus">Review and confirm below</span>
+      </div>
       <div class="form-grid" id="scannedForm"></div>
+
+      <!-- LINE ITEMS -->
+      <div id="lineItemsSection" style="display:none;margin-top:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray)">Line Items</div>
+          <button class="btn-add-ing" onclick="addLineItemRow()">+ Add Row</button>
+        </div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px">
+          <div style="display:grid;grid-template-columns:2fr 60px 80px 80px 36px;gap:4px;padding:8px 10px;background:var(--red);color:white;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">
+            <div>Item</div><div>Qty</div><div>Unit</div><div style="text-align:right">Price</div><div></div>
+          </div>
+          <div id="lineItemRows"></div>
+        </div>
+        <div id="lineItemTotal" style="background:#FFFDE0;border:1.5px solid var(--yellow);border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;display:none"></div>
+      </div>
+
       <button class="btn-primary" onclick="saveScannedEntry()" style="margin-top:16px">Save Entry</button>
       <button class="btn-secondary" onclick="resetScan()">Scan Another</button>
     </div>
@@ -977,200 +1017,296 @@ document.addEventListener('click',function(ev){
 // ─── SCAN ─────────────────────────────────────────
 const ANTHROPIC_KEY = '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';
 
-function saveApiKey() {} // no longer needed — key is hardcoded
+let scanPages = []; // array of {dataUrl, b64, mt}
+
+function saveApiKey() {}
 
 function handleDrop(ev) {
-  ev.preventDefault(); document.getElementById('scanZone').classList.remove('drag-over');
-  const f=ev.dataTransfer.files[0]; if(f&&f.type.startsWith('image/')) processFile(f);
+  ev.preventDefault();
+  document.getElementById('scanZone').classList.remove('drag-over');
+  const files = Array.from(ev.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
+  files.forEach(loadScanFile);
 }
-function handleFile(ev) { const f=ev.target.files[0]; if(f) processFile(f); }
 
-function processFile(file) {
-  // Validate file type
-  if (!file.type.startsWith('image/')) { toast('Please upload an image file'); return; }
-  // Validate file size (max 10MB)
-  if (file.size > 10 * 1024 * 1024) { toast('Image too large — please use under 10MB'); return; }
+function addScanFile(ev)  { const f=ev.target.files[0]; if(f) loadScanFile(f); ev.target.value=''; }
+function addScanFiles(ev) { Array.from(ev.target.files).forEach(loadScanFile); ev.target.value=''; }
 
+function loadScanFile(file) {
+  if (!file.type.startsWith('image/')) { toast('Please use image files only'); return; }
+  if (file.size > 15*1024*1024) { toast('File too large (max 15MB)'); return; }
+  if (scanPages.length >= 8) { toast('Max 8 pages per invoice'); return; }
   const r = new FileReader();
   r.onload = async (ev) => {
     const dataUrl = ev.target.result;
-
-    // Show preview
-    const preview = document.getElementById('previewImg');
-    preview.src = dataUrl;
-    preview.style.display = 'block';
-    document.getElementById('scanZone').style.display = 'none';
-    document.getElementById('aiResult').classList.remove('show');
-    document.getElementById('analyzingOverlay').classList.add('show');
-    document.querySelector('.analyzing-text').textContent = 'Reading invoice with AI…';
-
-    try {
-      // Compress image if too large
-      const { b64, mt } = await compressImage(dataUrl, file.type);
-      const data = await callClaude(b64, mt);
-      populateForm(data);
-
-      // Show confidence feedback
-      const confident = data._confident;
-      const statusEl = document.getElementById('aiStatus');
-      if (confident) {
-        statusEl.textContent = '✓ All fields extracted — please review';
-        statusEl.style.color = 'var(--green)';
-      } else {
-        statusEl.textContent = '⚠️ Some fields need your attention';
-        statusEl.style.color = '#E67E22';
-      }
-
-      document.getElementById('aiResult').classList.add('show');
-      toast(confident ? '✓ Invoice read successfully' : '⚠️ Partial read — please check fields');
-    } catch(err) {
-      console.error('Scan error:', err);
-      document.getElementById('analyzingOverlay').classList.remove('show');
-      populateForm({});
-      document.getElementById('aiResult').classList.add('show');
-      const statusEl = document.getElementById('aiStatus');
-      // Show the REAL error message so we can debug
-      statusEl.textContent = '❌ Error: ' + (err.message || 'Unknown error');
-      statusEl.style.color = 'var(--red)';
-      // Also show it as a longer toast
-      toast('Error: ' + (err.message||'').slice(0,60));
-    } finally {
-      document.getElementById('analyzingOverlay').classList.remove('show');
-    }
+    const { b64, mt } = await compressImage(dataUrl, file.type);
+    scanPages.push({ dataUrl, b64, mt, name: file.name });
+    renderThumbs();
   };
-  r.onerror = () => toast('Could not read file — try again');
   r.readAsDataURL(file);
 }
 
-// Compress image to reduce API costs and improve speed
-async function compressImage(dataUrl, mimeType) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      // Max 1600px on longest side
-      const MAX = 1600;
-      let w = img.width, h = img.height;
-      if (w > MAX || h > MAX) {
-        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-        else       { w = Math.round(w * MAX / h); h = MAX; }
-      }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const compressed = canvas.toDataURL('image/jpeg', 0.85);
-      resolve({ b64: compressed.split(',')[1], mt: 'image/jpeg' });
-    };
-    img.onerror = () => resolve({ b64: dataUrl.split(',')[1], mt: mimeType });
-    img.src = dataUrl;
-  });
+function renderThumbs() {
+  const strip = document.getElementById('thumbStrip');
+  const list  = document.getElementById('thumbList');
+  const count = document.getElementById('thumbCount');
+  document.getElementById('scanZone').style.display = scanPages.length ? 'none' : 'block';
+  strip.style.display = scanPages.length ? 'block' : 'none';
+  count.textContent = scanPages.length + (scanPages.length===1?' page':' pages');
+  list.innerHTML = scanPages.map((p,i) => `
+    <div style="position:relative;flex-shrink:0">
+      <img src="${p.dataUrl}" style="width:72px;height:90px;object-fit:cover;border-radius:8px;border:2px solid var(--border)">
+      <div style="position:absolute;top:2px;left:4px;background:var(--red);color:white;font-size:9px;font-weight:800;border-radius:4px;padding:1px 5px">${i+1}</div>
+      <button onclick="removePage(${i})" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.6);border:none;color:white;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center">×</button>
+    </div>`).join('');
 }
 
-async function callClaude(b64, mt) {
+function removePage(i) {
+  scanPages.splice(i,1);
+  renderThumbs();
+  if (scanPages.length===0) resetScan();
+}
+
+async function startScan() {
+  if (!scanPages.length) { toast('Add at least one image'); return; }
+  document.getElementById('thumbStrip').style.display='none';
+  document.getElementById('aiResult').classList.remove('show');
+  document.getElementById('analyzingOverlay').classList.add('show');
+
+  try {
+    let data;
+    if (scanPages.length === 1) {
+      document.getElementById('analyzingText').textContent = 'Reading invoice page 1…';
+      data = await callClaude([scanPages[0]]);
+    } else {
+      // Scan all pages, merge results
+      document.getElementById('analyzingText').textContent = `Reading ${scanPages.length} pages…`;
+      const results = [];
+      for (let i=0; i<scanPages.length; i++) {
+        document.getElementById('analyzingText').textContent = `Reading page ${i+1} of ${scanPages.length}…`;
+        const r = await callClaude([scanPages[i]], i>0 ? results[0] : null);
+        results.push(r);
+      }
+      data = mergeResults(results);
+    }
+
+    populateForm(data);
+    renderLineItems(data.items||[]);
+
+    const statusEl = document.getElementById('aiStatus');
+    if (data._confident) {
+      statusEl.textContent = `✓ ${scanPages.length>1?scanPages.length+' pages read — ':''}${(data.items||[]).length} items extracted`;
+      statusEl.style.color = 'var(--green)';
+    } else {
+      statusEl.textContent = '⚠️ Some fields need your attention';
+      statusEl.style.color = '#E67E22';
+    }
+    document.getElementById('aiResult').classList.add('show');
+    toast('✓ Invoice analyzed!');
+  } catch(err) {
+    console.error('Scan error:', err);
+    populateForm({});
+    renderLineItems([]);
+    document.getElementById('aiResult').classList.add('show');
+    const statusEl = document.getElementById('aiStatus');
+    statusEl.textContent = '❌ ' + (err.message||'Unknown error');
+    statusEl.style.color = 'var(--red)';
+    toast('Error: ' + (err.message||'').slice(0,60));
+  } finally {
+    document.getElementById('analyzingOverlay').classList.remove('show');
+  }
+}
+
+function mergeResults(results) {
+  // Use first page for header info, merge all line items
+  const base = results[0];
+  const allItems = results.flatMap(r => r.items||[]);
+  // Recalculate total from items if we have them
+  const itemTotal = allItems.reduce((s,i)=>s+(i.price||0),0);
+  return {
+    ...base,
+    items: allItems,
+    amount: itemTotal > 0 ? Math.round(itemTotal*100)/100 : base.amount,
+    _confident: results.every(r=>r._confident),
+    notes: results.map(r=>r.notes).filter(Boolean).join('; ')
+  };
+}
+
+async function callClaude(pages, prevData=null) {
   const prompt = `You are an expert at reading restaurant invoices, receipts, and supplier bills.
 
-Analyze this invoice image and extract the following information. The business is a restaurant called "Tu Pepito" that sells burgers, sandwiches and tacos, based in the US. Currency is USD.
+Analyze this invoice image and extract ALL information. The business is "Tu Pepito", a US burger/sandwich/taco restaurant. Currency is USD.
 
-Extract:
-- supplier: the vendor/supplier company name (NOT "Tu Pepito" — that's the buyer)
-- amount: the TOTAL amount due/paid as a number only, no $ sign. Use the grand total including tax.
-- date: the invoice date in YYYY-MM-DD format
-- ref: invoice number, folio, or reference number if visible
-- category: classify into EXACTLY one of these: "Food & Ingredients", "Drinks & Beverages", "Staff / Payroll", "Utilities & Rent", "Equipment & Supplies", "Other"
-- notes: a brief 1-line description of what was purchased (e.g. "Beef patties and buns x50", "Weekly produce delivery", "Gas bill")
-- tax: any tax amount shown (number only, 0 if none)
-- subtotal: pre-tax subtotal if shown (number only)
-- _confident: true if you could clearly read all main fields (supplier, amount, date), false if image is unclear or fields are missing
+${prevData ? `CONTEXT: This is a continuation page of the same invoice. Header info already extracted: supplier="${prevData.supplier}", date="${prevData.date}", ref="${prevData.ref}". Focus on extracting MORE line items from this page.` : ''}
 
-IMPORTANT RULES:
-- If you cannot read a field clearly, leave it as null
-- Never guess the amount — if unclear set to null
-- For category: food/produce/meat/dairy = "Food & Ingredients", wine/beer/beverages = "Drinks & Beverages"
-- Respond ONLY with a valid JSON object, no markdown, no explanation
+Extract these fields:
+- supplier: vendor/company name (NOT "Tu Pepito")
+- amount: GRAND TOTAL as number only (including tax)
+- date: invoice date as YYYY-MM-DD
+- ref: invoice/folio number
+- category: ONE of: "Food & Ingredients", "Drinks & Beverages", "Staff / Payroll", "Utilities & Rent", "Equipment & Supplies", "Other"
+- notes: 1-line summary of what was purchased
+- subtotal: pre-tax total (number)
+- tax: tax amount (number)
+- items: array of ALL line items found on this page, each with:
+  { "name": "item name", "qty": number, "unit": "kg/lb/unit/case/box/etc", "unit_price": price per unit, "price": total line price }
+- _confident: true if main fields (supplier, amount, date) are clearly readable
 
-Example response:
-{"supplier":"Metro Food Supply","amount":342.50,"date":"2025-05-01","ref":"INV-2024","category":"Food & Ingredients","notes":"Beef patties, buns, lettuce x weekly order","tax":27.40,"subtotal":315.10,"_confident":true}`;
+RULES:
+- Extract EVERY line item you can see — be thorough
+- For items, if qty or unit_price is not visible, estimate from the total or leave as null
+- Respond ONLY with valid JSON, no markdown
+
+Example:
+{"supplier":"Metro Foods","amount":342.50,"date":"2025-05-01","ref":"INV-001","category":"Food & Ingredients","notes":"Weekly produce and protein order","subtotal":315.00,"tax":27.50,"items":[{"name":"Beef Patties 4oz","qty":10,"unit":"case","unit_price":24.50,"price":245.00},{"name":"Brioche Buns","qty":5,"unit":"pack","unit_price":14.00,"price":70.00}],"_confident":true}`;
+
+  const content = pages.map(p => ({type:'image', source:{type:'base64', media_type:p.mt, data:p.b64}}));
+  content.push({type:'text', text:prompt});
 
   let res;
   try {
     res = await fetch('/.netlify/functions/scan', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 600,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: mt, data: b64 } },
-            { type: 'text', text: prompt }
-          ]
-        }]
-      })
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1500, messages:[{role:'user', content}] })
     });
-  } catch(networkErr) {
-    throw new Error('Network error: ' + networkErr.message);
-  }
+  } catch(e) { throw new Error('Network error: '+e.message); }
 
   if (!res.ok) {
     const body = await res.text().catch(()=>'');
     let msg = `HTTP ${res.status}`;
-    try { const j = JSON.parse(body); msg = j.error?.message || j.message || msg; } catch(e){}
-    throw new Error(msg + (body && !body.includes(msg) ? ' — '+body.slice(0,120) : ''));
+    try { const j=JSON.parse(body); msg=j.error?.message||msg; } catch(e){}
+    throw new Error(msg);
   }
 
   const data = await res.json();
-  const text = data.content.map(c => c.text||'').join('').replace(/```json|```/g,'').trim();
-  try {
-    return JSON.parse(text);
-  } catch(e) {
-    // Try to extract JSON from response
+  const text = data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+  try { return JSON.parse(text); }
+  catch(e) {
     const match = text.match(/\{[\s\S]*\}/);
     if (match) return JSON.parse(match[0]);
     throw new Error('Could not parse AI response');
   }
 }
 
+// Compress image
+async function compressImage(dataUrl, mimeType) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 1600;
+      let w=img.width, h=img.height;
+      if (w>MAX||h>MAX) { if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+      canvas.width=w; canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      resolve({b64:canvas.toDataURL('image/jpeg',0.85).split(',')[1], mt:'image/jpeg'});
+    };
+    img.onerror=()=>resolve({b64:dataUrl.split(',')[1], mt:mimeType});
+    img.src=dataUrl;
+  });
+}
+
+// ── LINE ITEMS ──
+function renderLineItems(items) {
+  const section = document.getElementById('lineItemsSection');
+  section.style.display = 'block';
+  const rows = document.getElementById('lineItemRows');
+
+  if (items.length) {
+    rows.innerHTML = items.map((_,i)=>lineItemRowHTML(i,items[i])).join('');
+  } else {
+    rows.innerHTML = '';
+    addLineItemRow(); // start with one blank
+  }
+  updateLineTotal();
+}
+
+function lineItemRowHTML(i, item={}) {
+  const rowId = 'li-'+i+'-'+Date.now();
+  return `<div class="li-row" id="${rowId}" style="display:grid;grid-template-columns:2fr 60px 80px 80px 36px;gap:4px;padding:7px 10px;border-bottom:1px solid #FFE8E6;align-items:center">
+    <input class="li-name" type="text" placeholder="Item name" value="${item.name||''}" style="background:white;border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;width:100%" oninput="updateLineTotal()">
+    <input class="li-qty"  type="number" placeholder="1" value="${item.qty||''}" step="any" min="0" style="background:white;border:1.5px solid var(--border);border-radius:6px;padding:6px 4px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;width:100%;text-align:center" oninput="updateLineTotal()">
+    <input class="li-unit" type="text" placeholder="unit" value="${item.unit||''}" style="background:white;border:1.5px solid var(--border);border-radius:6px;padding:6px 6px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;width:100%">
+    <input class="li-price" type="number" placeholder="0.00" value="${item.price||''}" step="0.01" min="0" style="background:white;border:1.5px solid var(--border);border-radius:6px;padding:6px 4px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;width:100%;text-align:right" oninput="updateLineTotal()">
+    <button onclick="this.closest('.li-row').remove();updateLineTotal()" style="background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='#ccc'">×</button>
+  </div>`;
+}
+
+function addLineItemRow() {
+  const rows = document.getElementById('lineItemRows');
+  const div = document.createElement('div');
+  div.innerHTML = lineItemRowHTML(Date.now());
+  rows.appendChild(div.firstElementChild);
+  updateLineTotal();
+}
+
+function updateLineTotal() {
+  const rows = document.querySelectorAll('#lineItemRows .li-row');
+  let total = 0;
+  rows.forEach(r => { total += parseFloat(r.querySelector('.li-price')?.value)||0; });
+  const el = document.getElementById('lineItemTotal');
+  if (total > 0) {
+    el.style.display='block';
+    el.innerHTML = `🧮 Items total: <strong>$${total.toFixed(2)}</strong> — <span style="color:var(--warm-gray);font-weight:600">adjust the invoice total above if needed</span>`;
+    // auto-update amount field if empty
+    const amtField = document.getElementById('s-amount');
+    if (amtField && !amtField.dataset.manuallyEdited) amtField.value = total.toFixed(2);
+  } else {
+    el.style.display='none';
+  }
+}
+
+function getLineItems() {
+  const rows = document.querySelectorAll('#lineItemRows .li-row');
+  const items = [];
+  rows.forEach(r => {
+    const name = r.querySelector('.li-name')?.value.trim();
+    if (!name) return;
+    items.push({
+      name,
+      qty:   parseFloat(r.querySelector('.li-qty')?.value)||null,
+      unit:  r.querySelector('.li-unit')?.value.trim()||null,
+      price: parseFloat(r.querySelector('.li-price')?.value)||null,
+    });
+  });
+  return items;
+}
+
 function populateForm(d) {
-  const hasData = d && (d.amount || d.supplier || d.date);
+  const hasData = d && (d.amount||d.supplier||d.date);
   document.getElementById('scannedForm').innerHTML = `
     <div class="form-row">
       <div class="field">
         <label>Amount (USD $)</label>
         <input type="number" id="s-amount" value="${d.amount||''}" placeholder="0.00" step="0.01"
-          style="${!d.amount ? 'border-color:var(--yellow)' : ''}">
+          style="${!d.amount?'border-color:var(--yellow)':''}"
+          oninput="this.dataset.manuallyEdited=1">
       </div>
       <div class="field">
         <label>Date</label>
         <input type="date" id="s-date" value="${d.date||today()}"
-          style="${!d.date ? 'border-color:var(--yellow)' : ''}">
+          style="${!d.date?'border-color:var(--yellow)':''}">
       </div>
     </div>
-    ${d.subtotal||d.tax ? `
+    ${d.subtotal||d.tax?`
     <div class="form-row">
-      <div class="field"><label>Subtotal</label><input type="number" id="s-subtotal" value="${d.subtotal||''}" placeholder="0.00" step="0.01" style="background:#FAF8F8;color:var(--warm-gray)" disabled></div>
-      <div class="field"><label>Tax</label><input type="number" id="s-tax" value="${d.tax||''}" placeholder="0.00" step="0.01" style="background:#FAF8F8;color:var(--warm-gray)" disabled></div>
-    </div>` : ''}
+      <div class="field"><label>Subtotal</label><input type="number" value="${d.subtotal||''}" placeholder="0.00" step="0.01" style="background:#FAF8F8;color:var(--warm-gray)" disabled></div>
+      <div class="field"><label>Tax</label><input type="number" value="${d.tax||''}" placeholder="0.00" step="0.01" style="background:#FAF8F8;color:var(--warm-gray)" disabled></div>
+    </div>`:''}
     <div class="field">
       <label>Supplier</label>
       <input type="text" id="s-supplier" value="${d.supplier||''}" placeholder="Vendor name"
-        style="${!d.supplier ? 'border-color:var(--yellow)' : ''}">
+        style="${!d.supplier?'border-color:var(--yellow)':''}">
     </div>
-    <div class="field">
-      <label>Category</label>
+    <div class="field"><label>Category</label>
       <select id="s-category">
         <option value="">Select…</option>
         ${Object.keys(CAT).map(c=>`<option ${c===d.category?'selected':''}>${c}</option>`).join('')}
       </select>
     </div>
-    <div class="field">
-      <label>Invoice / Ref #</label>
-      <input type="text" id="s-ref" value="${d.ref||''}" placeholder="Optional">
-    </div>
-    <div class="field">
-      <label>Notes</label>
-      <textarea id="s-notes" placeholder="What was purchased…">${d.notes||''}</textarea>
-    </div>
-    ${hasData ? '' : '<div style="background:#FFFDE0;border:1px solid var(--yellow);border-radius:8px;padding:10px 12px;font-size:12px;color:#856404;font-weight:600">⚠️ AI could not read this image clearly. Try a better-lit photo or fill in manually.</div>'}
+    <div class="field"><label>Invoice / Ref #</label><input type="text" id="s-ref" value="${d.ref||''}" placeholder="Optional"></div>
+    <div class="field"><label>Notes</label><textarea id="s-notes" placeholder="What was purchased…">${d.notes||''}</textarea></div>
+    ${!hasData?'<div style="background:#FFFDE0;border:1px solid var(--yellow);border-radius:8px;padding:10px 12px;font-size:12px;color:#856404;font-weight:600">⚠️ AI could not read this image. Try a clearer photo or fill in manually.</div>':''}
   `;
 }
 
@@ -1179,18 +1315,37 @@ async function saveScannedEntry() {
   if(!amt||amt<=0){toast('Enter a valid amount');return;}
   const dv=document.getElementById('s-date').value;
   if(lockedMonths.includes(keyFromStr(dv))){toast('⚠️ This month is locked');return;}
-  const entry={id:uid(),date:dv||today(),supplier:document.getElementById('s-supplier').value||'Unknown',category:document.getElementById('s-category').value||'Other',amount:amt,ref:document.getElementById('s-ref').value,notes:document.getElementById('s-notes').value,source:'scan'};
+  const items = getLineItems();
+  const entry={
+    id:uid(), date:dv||today(),
+    supplier:document.getElementById('s-supplier').value||'Unknown',
+    category:document.getElementById('s-category').value||'Other',
+    amount:amt,
+    ref:document.getElementById('s-ref').value,
+    notes:document.getElementById('s-notes').value,
+    source:'scan',
+    items  // store line items with the entry
+  };
   showLoading(true);
   try {
-    await sbInsert('tp_entries',{id:entry.id,date:entry.date,supplier:entry.supplier,category:entry.category,amount:entry.amount,ref:entry.ref,notes:entry.notes,source:entry.source});
-    entries.unshift(entry); toast('✓ Entry saved!'); setTimeout(resetScan,800); refreshAll();
+    await sbInsert('tp_entries',{
+      id:entry.id,date:entry.date,supplier:entry.supplier,category:entry.category,
+      amount:entry.amount,ref:entry.ref,notes:entry.notes,source:entry.source,
+      items:entry.items
+    });
+    entries.unshift(entry);
+    toast(`✓ Entry saved${items.length?' with '+items.length+' line items':''}!`);
+    setTimeout(resetScan,800);
+    refreshAll();
   } catch(e){ toast('Error saving: '+e.message); }
   showLoading(false);
 }
 
 function resetScan() {
-  document.getElementById('previewImg').style.display='none';
+  scanPages=[];
   document.getElementById('scanZone').style.display='block';
+  document.getElementById('thumbStrip').style.display='none';
+  document.getElementById('thumbList').innerHTML='';
   document.getElementById('aiResult').classList.remove('show');
   document.getElementById('fileInputCamera').value='';
   document.getElementById('fileInputGallery').value='';
