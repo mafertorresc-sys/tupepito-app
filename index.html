@@ -1,0 +1,2508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tu Pepito — Contabilidad</title>
+
+<!-- ── PWA META ── -->
+<meta name="application-name" content="Tu Pepito">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tu Pepito">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#E8281A">
+<meta name="description" content="Restaurant accounting app for Tu Pepito">
+
+<!-- ── PWA MANIFEST (inline) ── -->
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22Tu%20Pepito%20Contabilidad%22%2C%22short_name%22%3A%22Tu%20Pepito%22%2C%22description%22%3A%22Restaurant%20accounting%20app%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23E8281A%22%2C%22theme_color%22%3A%22%23E8281A%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjQwIiBmaWxsPSIjRTgyODFBIi8%2BPHRleHQgeD0iOTYiIHk9IjExMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9IjcwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI%2BdHA8L3RleHQ%2BPGxpbmUgeDE9IjI0IiB5MT0iMTM4IiB4Mj0iMTY4IiB5Mj0iMTM4IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjYiLz48L3N2Zz4%3D%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%2C%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjEwMCIgZmlsbD0iI0U4MjgxQSIvPjx0ZXh0IHg9IjI1NiIgeT0iMjkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtd2VpZ2h0PSI5MDAiIGZvbnQtc2l6ZT0iMTgwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI%2BdHA8L3RleHQ%2BPGxpbmUgeDE9IjYwIiB5MT0iMzYwIiB4Mj0iNDUyIiB5Mj0iMzYwIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjE2Ii8%2BPC9zdmc%2B%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
+<!-- ── APPLE TOUCH ICON (inline SVG→canvas) ── -->
+<link rel="apple-touch-icon" id="appleTouchIcon">
+
+<!-- ── SPLASH SCREENS for iPhone ── -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FFFDF7; --ink: #1A0A00; --charcoal: #2A0A00; --warm-gray: #8A7060;
+    --gold: #E8B800; --gold-light: #FFF0A0; --red: #E8281A; --red-dark: #C01A0E;
+    --red-light: #FFE8E6; --green: #1A6A3A; --yellow: #FFD600; --yellow-light: #FFFACC;
+    --border: rgba(232,40,26,0.15); --shadow: 0 2px 20px rgba(232,40,26,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; font-size: 14px; }
+
+  header { background: var(--red); color: white; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(200,0,0,0.3); }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; }
+  .logo-svg { height: 36px; width: auto; }
+  .logo-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.7); margin-top: 2px; }
+  .header-date { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.65); letter-spacing: 0.08em; }
+
+  nav { background: var(--red-dark); display: flex; overflow-x: auto; scrollbar-width: none; border-bottom: 2px solid rgba(255,255,255,0.08); }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-tab { padding: 12px 16px; color: rgba(255,255,255,0.55); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .nav-tab.active { color: var(--yellow); border-bottom-color: var(--yellow); }
+  .nav-tab:hover:not(.active) { color: white; }
+
+  main { padding: 20px; max-width: 680px; margin: 0 auto; }
+  .view { display: none; animation: fadeIn 0.25s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .section-title { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+  .section-sub { color: var(--warm-gray); font-size: 12px; margin-bottom: 20px; font-weight: 600; }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); }
+  .stat-card.full { grid-column: 1 / -1; }
+  .stat-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 6px; font-weight: 800; }
+  .stat-value { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; color: var(--red); }
+  .stat-sub { font-size: 11px; color: var(--warm-gray); margin-top: 3px; font-weight: 600; }
+
+  .breakdown { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; box-shadow: var(--shadow); }
+  .breakdown-title { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 14px; font-weight: 800; }
+  .bar-row { margin-bottom: 12px; }
+  .bar-meta { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .bar-name { font-size: 13px; font-weight: 700; }
+  .bar-amount { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--warm-gray); }
+  .bar-track { height: 7px; background: #FFE8E6; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .bar-food { background: var(--red); } .bar-staff { background: #5B8DB8; } .bar-utilities { background: #27AE60; }
+  .bar-equipment { background: #E67E22; } .bar-drinks { background: var(--yellow); } .bar-other { background: var(--warm-gray); }
+
+  .entries-list { display: flex; flex-direction: column; gap: 8px; }
+  .entry-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); transition: transform 0.15s, box-shadow 0.15s; }
+  .entry-card:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(232,40,26,0.12); }
+  .entry-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .icon-food{background:#FFEAEA;} .icon-staff{background:#D6EAF8;} .icon-utilities{background:#D5F5E3;}
+  .icon-equipment{background:#FDEBD0;} .icon-drinks{background:#FFFACC;} .icon-other{background:#F0E8E8;}
+  .entry-info { flex: 1; min-width: 0; }
+  .entry-supplier { font-weight: 800; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry-meta { font-size: 11px; color: var(--warm-gray); margin-top: 2px; font-weight: 600; }
+  .entry-amount { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 700; flex-shrink: 0; color: var(--red); }
+
+  /* DELETE / EDIT ACTIONS */
+  .entry-card-wrap { position: relative; overflow: hidden; border-radius: 12px; margin-bottom: 0; }
+  .entry-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; align-items: stretch; transform: translateX(100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); }
+  .entry-actions.visible { transform: translateX(0); }
+  .entry-action-btn { border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0 18px; font-family: 'Nunito', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; transition: filter 0.15s; }
+  .entry-action-btn:hover { filter: brightness(0.9); }
+  .btn-edit-entry  { background: #5B8DB8; color: white; }
+  .btn-del-entry   { background: var(--red); color: white; }
+  .entry-action-icon { font-size: 16px; }
+  .entry-card.has-actions { border-radius: 12px 0 0 12px; cursor: pointer; user-select: none; }
+  .entry-card.active-actions { box-shadow: none; transform: none; border-color: transparent; }
+
+  .scan-zone { background: white; border: 2.5px dashed var(--red); border-radius: 16px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
+  .scan-zone:hover { background: #FFF0EE; }
+  .scan-icon { font-size: 40px; margin-bottom: 12px; }
+  .scan-title { font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+  .scan-hint { font-size: 12px; color: var(--warm-gray); line-height: 1.5; font-weight: 600; }
+  #fileInput { display: none; }
+  .camera-btn { background: var(--red); color: white; border: none; border-radius: 12px; padding: 14px 24px; width: 100%; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; transition: background 0.2s; }
+  .camera-btn:hover { background: var(--red-dark); }
+
+  .ai-result { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; display: none; }
+  .ai-result.show { display: block; animation: fadeIn 0.3s ease; }
+  .ai-result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .ai-badge { background: var(--red); color: white; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 4px; }
+  .ai-status { font-size: 12px; color: var(--warm-gray); font-weight: 600; }
+
+  .form-grid { display: flex; flex-direction: column; gap: 14px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--warm-gray); font-weight: 800; }
+  input, select, textarea { background: #FFF8F8; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink); transition: border-color 0.2s; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--red); background: white; }
+  textarea { resize: vertical; min-height: 70px; }
+  .preview-img { width: 100%; border-radius: 10px; border: 1.5px solid var(--border); margin-bottom: 16px; max-height: 220px; object-fit: cover; }
+
+  .btn-primary { background: var(--red); color: white; border: none; border-radius: 12px; padding: 14px 24px; width: 100%; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 4px; }
+  .btn-primary:hover { background: var(--red-dark); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary { background: transparent; color: var(--warm-gray); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 24px; width: 100%; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+  .btn-secondary:hover { border-color: var(--ink); color: var(--ink); }
+
+  .quick-cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+  .quick-cat { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .quick-cat:hover, .quick-cat.selected { border-color: var(--red); background: #FFF0EE; }
+  .quick-cat-icon { font-size: 22px; margin-bottom: 4px; }
+  .quick-cat-name { font-size: 11px; font-weight: 800; color: var(--ink); }
+
+  .period-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .period-tab { padding: 8px 16px; border: 1.5px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; background: white; }
+  .period-tab.active { background: var(--red); color: white; border-color: var(--red); }
+
+  .report-table { background: white; border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .report-table-header { display: grid; grid-template-columns: 1fr auto auto auto; padding: 10px 16px; background: var(--red); color: white; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; gap: 8px; font-weight: 800; }
+  .report-row { display: grid; grid-template-columns: 1fr auto auto auto; padding: 12px 16px; border-bottom: 1px solid #FFE8E6; gap: 8px; align-items: center; font-size: 13px; }
+  .report-row:last-child { border-bottom: none; }
+  .report-row:hover { background: #FFF8F8; }
+  .report-cat { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+  .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .report-mono { font-family: 'DM Mono', monospace; font-size: 12px; text-align: right; }
+  .report-pct { color: var(--warm-gray); }
+  .report-total { display: grid; grid-template-columns: 1fr auto; padding: 14px 16px; background: var(--ink); color: white; font-weight: 800; }
+  .report-total-mono { font-family: 'DM Mono', monospace; font-size: 15px; color: var(--yellow); }
+
+  .supplier-table { background: white; border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .supplier-header { display: grid; grid-template-columns: 1fr auto auto; padding: 10px 16px; background: var(--red); color: white; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; gap: 8px; font-weight: 800; }
+  .supplier-row { display: grid; grid-template-columns: 1fr auto auto; padding: 11px 16px; border-bottom: 1px solid #FFE8E6; gap: 8px; align-items: center; font-size: 13px; font-weight: 600; }
+  .supplier-row:last-child { border-bottom: none; }
+  .supplier-row:hover { background: #FFF8F8; }
+
+  .export-row { display: flex; gap: 10px; }
+  .export-btn { flex: 1; background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .export-btn:hover { border-color: var(--red); background: var(--red); color: white; }
+
+  /* CLOSE MONTH */
+  .close-month-card { background: white; border: 2.5px solid var(--yellow); border-radius: 14px; padding: 22px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(232,184,0,0.15); }
+  .close-month-title { font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+  .close-month-desc { font-size: 13px; color: var(--warm-gray); line-height: 1.6; margin-bottom: 16px; font-weight: 600; }
+  .close-month-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .cm-stat { background: #FFFDE0; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid rgba(232,184,0,0.3); }
+  .cm-stat-val { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900; color: var(--red); }
+  .cm-stat-lbl { font-size: 10px; color: var(--warm-gray); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; font-weight: 700; }
+  .btn-close-month { background: var(--ink); color: white; border: none; border-radius: 12px; padding: 14px 24px; width: 100%; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+  .btn-close-month:hover { background: var(--red); }
+
+  /* ARCHIVE */
+  .archive-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .archive-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+  .archive-month-name { font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 900; }
+  .archive-badge { background: #D5F5E3; color: var(--green); font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; white-space: nowrap; }
+  .archive-meta { font-size: 11px; color: var(--warm-gray); margin-top: 3px; font-weight: 600; }
+  .archive-total { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 900; color: var(--red); }
+  .archive-cats { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .archive-cat-chip { font-size: 11px; padding: 4px 10px; border-radius: 20px; border: 1.5px solid var(--border); color: var(--ink); font-weight: 700; }
+  .archive-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .arch-btn { flex: 1; padding: 10px; border: 1.5px solid var(--border); border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; background: white; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .arch-btn:hover { border-color: var(--red); background: var(--red); color: white; }
+  .arch-btn.danger { color: var(--red); border-color: #FAD7D3; }
+  .arch-btn.danger:hover { background: var(--red); color: white; border-color: var(--red); }
+
+  .locked-notice { background: #D5F5E3; border: 1px solid #A8D5B8; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--green); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 700; }
+
+  .filter-bar { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 16px; padding-bottom: 2px; }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-chip { padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 20px; font-size: 11px; font-weight: 800; cursor: pointer; white-space: nowrap; background: white; transition: all 0.2s; }
+  .filter-chip.active { background: var(--red); color: white; border-color: var(--red); }
+
+  .analyzing-overlay { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 32px; gap: 12px; text-align: center; }
+  .analyzing-overlay.show { display: flex; }
+  .analyzing-text { font-size: 13px; color: var(--warm-gray); font-weight: 600; }
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2.5px solid rgba(232,40,26,0.2); border-top-color: var(--red); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .no-api-note { background: #FFFDE0; border: 1.5px solid var(--yellow); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #856404; margin-bottom: 16px; line-height: 1.5; font-weight: 600; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: white; padding: 12px 20px; border-radius: 24px; font-size: 13px; font-weight: 800; z-index: 999; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(26,10,0,0.6); z-index: 200; display: flex; align-items: flex-end; justify-content: center; animation: fadeIn 0.2s ease; }
+  .modal { background: var(--cream); border-radius: 20px 20px 0 0; padding: 28px 24px 40px; width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(.34,1.2,.64,1); position: relative; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  @keyframes slideUp2 { from { transform: translateY(40px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .modal-title { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+  .modal-sub { color: var(--warm-gray); font-size: 13px; margin-bottom: 24px; font-weight: 600; }
+  .modal-close { position: absolute; top: 20px; right: 24px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--warm-gray); }
+
+  .warn-box { background: #FFFDE0; border: 1.5px solid var(--yellow); border-radius: 10px; padding: 14px; font-size: 13px; color: #856404; margin-bottom: 20px; line-height: 1.6; font-weight: 600; }
+  .empty { text-align: center; padding: 40px 20px; color: var(--warm-gray); }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; }
+  .empty-text { font-size: 14px; line-height: 1.6; font-weight: 600; }
+  .section-divider { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); margin: 20px 0 10px; font-weight: 800; }
+
+  /* ── INGREDIENT LIBRARY ── */
+  .ing-lib-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; box-shadow: var(--shadow); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .ing-lib-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,40,26,0.12); }
+  .ing-lib-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .ing-lib-name { font-size: 15px; font-weight: 900; }
+  .ing-lib-meta { font-size: 11px; color: var(--warm-gray); font-weight: 600; margin-top: 2px; }
+  .ing-cat-badge { font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+  .ibadge-Protein    { background: #FFEAEA; color: var(--red); }
+  .ibadge-Produce    { background: #D5F5E3; color: var(--green); }
+  .ibadge-Dairy      { background: #E8F0FB; color: #1B4F8A; }
+  .ibadge-Bakery     { background: var(--yellow-light); color: #856404; }
+  .ibadge-Condiment  { background: #F3E8FD; color: #6B3A9A; }
+  .ibadge-Dry\ Goods { background: #FDF0E0; color: #A0522D; }
+  .ibadge-Beverages  { background: #E8F8F8; color: #0E6655; }
+  .ibadge-Other      { background: #F0F0F0; color: #555; }
+  .ing-alias-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .ing-alias-chip { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: #F8F4F0; border: 1px solid var(--border); color: var(--ink); font-weight: 700; }
+  .ing-price-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .ing-price-val { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; color: var(--red); }
+  .ing-price-lbl { font-size: 10px; color: var(--warm-gray); font-weight: 600; margin-top: 1px; }
+  .ing-trend { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 20px; }
+  .trend-up   { background: #FFEAEA; color: var(--red); }
+  .trend-down { background: #D5F5E3; color: var(--green); }
+  .trend-flat { background: #F0F0F0; color: var(--warm-gray); }
+  .ing-recipe-links { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .ing-recipe-link { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: var(--red-light); border: 1px solid rgba(232,40,26,.2); color: var(--red); font-weight: 700; }
+  .ing-alias-tag { background: white; border: 1.5px solid var(--border); border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .ing-alias-tag button { background: none; border: none; color: #ccc; font-size: 14px; cursor: pointer; line-height: 1; padding: 0; transition: color .15s; }
+  .ing-alias-tag button:hover { color: var(--red); }
+  .unmatched-banner { background: var(--yellow-light); border: 1.5px solid var(--yellow); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+  .unmatched-banner-title { font-size: 13px; font-weight: 900; margin-bottom: 8px; }
+  .unmatched-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(232,184,0,.3); gap: 10px; }
+  .unmatched-item:last-child { border-bottom: none; }
+  .unmatched-raw { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; flex: 1; }
+  .btn-map-it { background: var(--yellow); color: var(--ink); border: none; border-radius: 8px; padding: 5px 12px; font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: filter .15s; }
+  .btn-map-it:hover { filter: brightness(.92); }
+
+  /* ── RECIPES ── */
+  .btn-new-recipe { background: var(--red); color: white; border: none; border-radius: 10px; padding: 10px 16px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background .2s; }
+  .btn-new-recipe:hover { background: var(--red-dark); }
+
+  .recipe-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 10px; box-shadow: var(--shadow); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .recipe-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(232,40,26,0.13); }
+  .recipe-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .recipe-cat-badge { font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: #FFEAEA; color: var(--red); white-space: nowrap; }
+  .recipe-name { font-size: 16px; font-weight: 900; line-height: 1.2; }
+  .recipe-meta { font-size: 11px; color: var(--warm-gray); margin-top: 4px; font-weight: 600; }
+  .recipe-ing-preview { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .ing-chip { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: #FFF8F8; border: 1px solid var(--border); color: var(--ink); font-weight: 700; }
+  .recipe-card-actions { display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+  .recipe-action-btn { flex: 1; padding: 8px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; background: white; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all .2s; }
+  .recipe-action-btn:hover { border-color: var(--red); background: var(--red); color: white; }
+  .recipe-action-btn.danger { color: var(--red); border-color: #FAD7D3; }
+  .recipe-action-btn.danger:hover { background: var(--red); color: white; border-color: var(--red); }
+
+  /* ingredient table inside modal */
+  .btn-add-ing { background: transparent; border: 1.5px dashed var(--red); color: var(--red); border-radius: 8px; padding: 5px 14px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; transition: all .2s; }
+  .btn-add-ing:hover { background: var(--red); color: white; }
+  .ing-table-wrap { background: #FFF8F8; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+  .ing-table-header { display: grid; grid-template-columns: 2fr 80px 90px 1fr 36px; gap: 6px; padding: 8px 12px; background: var(--red); color: white; font-size: 10px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+  .ing-row { display: grid; grid-template-columns: 2fr 80px 90px 1fr 36px; gap: 6px; padding: 7px 12px; border-bottom: 1px solid #FFE8E6; align-items: center; }
+  .ing-row:last-child { border-bottom: none; }
+  .ing-row input, .ing-row select { background: white; border: 1.5px solid var(--border); border-radius: 6px; padding: 6px 8px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: var(--ink); width: 100%; }
+  .ing-row input:focus, .ing-row select:focus { outline: none; border-color: var(--red); }
+  .ing-del-btn { background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer; padding: 0; line-height: 1; transition: color .15s; display: flex; align-items: center; justify-content: center; }
+  .ing-del-btn:hover { color: var(--red); }
+  .ing-total-bar { background: #FFFDE0; border: 1.5px solid var(--yellow); border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--ink); display: none; }
+  .ing-total-bar.show { display: block; }
+
+  /* recipe detail modal */
+  .detail-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 6px; }
+  .detail-ing-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+  .detail-ing-table th { background: var(--red); color: white; padding: 8px 12px; text-align: left; font-size: 10px; letter-spacing: .07em; text-transform: uppercase; font-weight: 800; }
+  .detail-ing-table td { padding: 9px 12px; border-bottom: 1px solid #FFE8E6; font-weight: 600; }
+  .detail-ing-table tr:last-child td { border-bottom: none; }
+  .detail-ing-table tr:nth-child(even) td { background: #FFF8F8; }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
+  .stat-card.full { grid-column: 1 / -1; }
+  .stat-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 6px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; }
+  .stat-sub { font-size: 11px; color: var(--warm-gray); margin-top: 3px; }
+
+  .breakdown { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; box-shadow: var(--shadow); }
+  .breakdown-title { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 14px; }
+  .bar-row { margin-bottom: 12px; }
+  .bar-meta { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .bar-name { font-size: 13px; font-weight: 500; }
+  .bar-amount { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--warm-gray); }
+  .bar-track { height: 6px; background: #EDE8DF; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .bar-food { background: var(--gold); } .bar-staff { background: #5B8DB8; } .bar-utilities { background: #7DBD8A; }
+  .bar-equipment { background: #C9856A; } .bar-drinks { background: #A67BB5; } .bar-other { background: var(--warm-gray); }
+
+  .entries-list { display: flex; flex-direction: column; gap: 8px; }
+  .entry-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow); transition: transform 0.15s, box-shadow 0.15s; }
+  .entry-card:hover { transform: translateY(-1px); box-shadow: 0 4px 24px rgba(26,22,16,0.12); }
+  .entry-icon { width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .icon-food{background:#FEF3CD;} .icon-staff{background:#D6EAF8;} .icon-utilities{background:#D5F5E3;}
+  .icon-equipment{background:#FDEBD0;} .icon-drinks{background:#E8DAEF;} .icon-other{background:#EDE8DF;}
+  .entry-info { flex: 1; min-width: 0; }
+  .entry-supplier { font-weight: 500; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry-meta { font-size: 11px; color: var(--warm-gray); margin-top: 2px; }
+  .entry-amount { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; flex-shrink: 0; }
+
+  /* DELETE / EDIT ACTIONS */
+  .entry-card-wrap { position: relative; overflow: hidden; border-radius: 10px; margin-bottom: 0; }
+  .entry-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; align-items: stretch; transform: translateX(100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); }
+  .entry-actions.visible { transform: translateX(0); }
+  .entry-action-btn { border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0 18px; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; transition: filter 0.15s; }
+  .entry-action-btn:hover { filter: brightness(0.9); }
+  .btn-edit-entry  { background: #5B8DB8; color: white; }
+  .btn-del-entry   { background: var(--red);  color: white; }
+  .entry-action-icon { font-size: 16px; }
+  .entry-card.has-actions { border-radius: 10px 0 0 10px; cursor: pointer; user-select: none; }
+  .entry-card.active-actions { box-shadow: none; transform: none; border-color: transparent; }
+
+  .scan-zone { background: white; border: 2px dashed var(--gold); border-radius: 16px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
+  .scan-zone:hover { background: #FFFBF2; }
+  .scan-icon { font-size: 40px; margin-bottom: 12px; }
+  .scan-title { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 6px; }
+  .scan-hint { font-size: 12px; color: var(--warm-gray); line-height: 1.5; }
+  #fileInput { display: none; }
+  .camera-btn { background: var(--ink); color: var(--cream); border: none; border-radius: 10px; padding: 14px 24px; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; transition: background 0.2s; }
+  .camera-btn:hover { background: var(--charcoal); }
+
+  .ai-result { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; display: none; }
+  .ai-result.show { display: block; animation: fadeIn 0.3s ease; }
+  .ai-result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .ai-badge { background: var(--ink); color: var(--gold); font-size: 10px; font-weight: 500; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 4px; }
+  .ai-status { font-size: 12px; color: var(--warm-gray); }
+
+  .form-grid { display: flex; flex-direction: column; gap: 14px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--warm-gray); font-weight: 500; }
+  input, select, textarea { background: #FAF7F2; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); transition: border-color 0.2s; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); background: white; }
+  textarea { resize: vertical; min-height: 70px; }
+  .preview-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 16px; max-height: 220px; object-fit: cover; }
+
+  .btn-primary { background: var(--gold); color: var(--ink); border: none; border-radius: 10px; padding: 14px 24px; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 4px; }
+  .btn-primary:hover { background: #B8943E; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary { background: transparent; color: var(--warm-gray); border: 1px solid var(--border); border-radius: 10px; padding: 12px 24px; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+  .btn-secondary:hover { border-color: var(--ink); color: var(--ink); }
+
+  .quick-cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+  .quick-cat { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .quick-cat:hover, .quick-cat.selected { border-color: var(--gold); background: #FFFBF2; }
+  .quick-cat-icon { font-size: 22px; margin-bottom: 4px; }
+  .quick-cat-name { font-size: 11px; font-weight: 500; color: var(--charcoal); }
+
+  .period-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .period-tab { padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; background: white; }
+  .period-tab.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+  .report-table { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .report-table-header { display: grid; grid-template-columns: 1fr auto auto auto; padding: 10px 16px; background: var(--charcoal); color: var(--cream); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; gap: 8px; }
+  .report-row { display: grid; grid-template-columns: 1fr auto auto auto; padding: 12px 16px; border-bottom: 1px solid var(--border); gap: 8px; align-items: center; font-size: 13px; }
+  .report-row:last-child { border-bottom: none; }
+  .report-row:hover { background: #FAF7F2; }
+  .report-cat { display: flex; align-items: center; gap: 8px; }
+  .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .report-mono { font-family: 'DM Mono', monospace; font-size: 12px; text-align: right; }
+  .report-pct { color: var(--warm-gray); }
+  .report-total { display: grid; grid-template-columns: 1fr auto; padding: 14px 16px; background: var(--ink); color: var(--cream); font-weight: 600; }
+  .report-total-mono { font-family: 'DM Mono', monospace; font-size: 15px; }
+
+  .supplier-table { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .supplier-header { display: grid; grid-template-columns: 1fr auto auto; padding: 10px 16px; background: var(--charcoal); color: var(--cream); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; gap: 8px; }
+  .supplier-row { display: grid; grid-template-columns: 1fr auto auto; padding: 11px 16px; border-bottom: 1px solid var(--border); gap: 8px; align-items: center; font-size: 13px; }
+  .supplier-row:last-child { border-bottom: none; }
+  .supplier-row:hover { background: #FAF7F2; }
+
+  .export-row { display: flex; gap: 10px; }
+  .export-btn { flex: 1; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+  .export-btn:hover { border-color: var(--red); background: var(--red); color: white; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <svg class="logo-svg" viewBox="0 0 240 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="1" y="33" font-family="Nunito,sans-serif" font-weight="900" font-size="36" fill="white" letter-spacing="-0.5">tu</text>
+      <text x="50" y="33" font-family="Nunito,sans-serif" font-weight="900" font-size="36" fill="white" letter-spacing="-0.5">pepito</text>
+      <line x1="1" y1="39" x2="238" y2="39" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div class="logo-label">Contabilidad</div>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</header>
+
+<nav>
+  <div class="nav-tab active" onclick="showView('dashboard',this)">Dashboard</div>
+  <div class="nav-tab" onclick="showView('scan',this)">📷 Scan</div>
+  <div class="nav-tab" onclick="showView('manual',this)">+ Entry</div>
+  <div class="nav-tab" onclick="showView('history',this)">History</div>
+  <div class="nav-tab" onclick="showView('reports',this)">Reports</div>
+  <div class="nav-tab" onclick="showView('archive',this)">🗄 Archive</div>
+  <div class="nav-tab" onclick="showView('recipes',this)">🍔 Recipes</div>
+  <div class="nav-tab" onclick="showView('ingredients',this)">📦 Ingredients</div>
+</nav>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <div class="view active" id="view-dashboard">
+    <p class="section-title">Overview</p>
+    <p class="section-sub" id="dash-period"></p>
+    <div id="locked-notice-dash"></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-value" id="stat-month">$0</div><div class="stat-sub" id="stat-entries">0 entries</div></div>
+      <div class="stat-card"><div class="stat-label">This Week</div><div class="stat-value" id="stat-week">$0</div><div class="stat-sub">7-day total</div></div>
+      <div class="stat-card full"><div class="stat-label">Top Category</div><div class="stat-value" id="stat-top-cat">—</div><div class="stat-sub" id="stat-top-amt"></div></div>
+    </div>
+    <div class="breakdown"><div class="breakdown-title">Spending by Category</div><div id="breakdown-bars"></div></div>
+    <div class="section-divider">Recent Entries</div>
+    <div class="entries-list" id="recent-list"></div>
+  </div>
+
+  <!-- SCAN -->
+  <div class="view" id="view-scan">
+    <p class="section-title">Scan Invoice</p>
+    <p class="section-sub">Upload one or multiple pages — AI will extract all line items</p>
+
+    <!-- Image inputs -->
+    <input type="file" id="fileInputCamera" accept="image/*" capture="environment" onchange="addScanFile(event)" style="display:none">
+    <input type="file" id="fileInputGallery" accept="image/*" multiple onchange="addScanFiles(event)" style="display:none">
+
+    <!-- Buttons -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <button class="camera-btn" onclick="document.getElementById('fileInputCamera').click()">
+        <span>📷</span> Take Photo
+      </button>
+      <button class="camera-btn" style="background:var(--ink)" onclick="document.getElementById('fileInputGallery').click()">
+        <span>🖼</span> Upload Images
+      </button>
+    </div>
+
+    <!-- Drop zone -->
+    <div class="scan-zone" id="scanZone"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="handleDrop(event)"
+      onclick="document.getElementById('fileInputGallery').click()">
+      <div class="scan-icon">🧾</div>
+      <div class="scan-title">Drop invoice pages here</div>
+      <div class="scan-hint">You can select multiple images at once for large invoices.</div>
+    </div>
+
+    <!-- Image thumbnails preview strip -->
+    <div id="thumbStrip" style="display:none;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:8px">
+        Pages to scan — <span id="thumbCount">0</span>
+      </div>
+      <div id="thumbList" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px"></div>
+      <button class="camera-btn" style="margin-top:10px" onclick="startScan()">
+        <span>🤖</span> Analyze with AI
+      </button>
+    </div>
+
+    <!-- Analyzing overlay -->
+    <div class="analyzing-overlay" id="analyzingOverlay">
+      <div class="spinner" style="width:28px;height:28px;border-width:3px"></div>
+      <div class="analyzing-text" id="analyzingText">Reading invoice with AI…</div>
+      <div style="font-size:11px;color:var(--warm-gray);margin-top:4px">This takes 5–15 seconds</div>
+    </div>
+
+    <!-- Results -->
+    <div class="ai-result" id="aiResult">
+      <div class="ai-result-header">
+        <span class="ai-badge">AI EXTRACTED</span>
+        <span class="ai-status" id="aiStatus">Review and confirm below</span>
+      </div>
+      <div class="form-grid" id="scannedForm"></div>
+
+      <!-- LINE ITEMS -->
+      <div id="lineItemsSection" style="display:none;margin-top:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray)">Line Items</div>
+          <button class="btn-add-ing" onclick="addLineItemRow()">+ Add Row</button>
+        </div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px">
+          <div style="display:grid;grid-template-columns:2fr 60px 80px 80px 36px;gap:4px;padding:8px 10px;background:var(--red);color:white;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">
+            <div>Item</div><div>Qty</div><div>Unit</div><div style="text-align:right">Price</div><div></div>
+          </div>
+          <div id="lineItemRows"></div>
+        </div>
+        <div id="lineItemTotal" style="background:#FFFDE0;border:1.5px solid var(--yellow);border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;display:none"></div>
+      </div>
+
+      <button class="btn-primary" onclick="saveScannedEntry()" style="margin-top:16px">Save Entry</button>
+      <button class="btn-secondary" onclick="resetScan()">Scan Another</button>
+    </div>
+  </div>
+
+  <!-- MANUAL ENTRY -->
+  <div class="view" id="view-manual">
+    <p class="section-title">Manual Entry</p>
+    <p class="section-sub">Add an expense without a photo</p>
+    <div class="quick-cats">
+      <div class="quick-cat" onclick="selectCat(this,'Food & Ingredients')"><div class="quick-cat-icon">🥩</div><div class="quick-cat-name">Food</div></div>
+      <div class="quick-cat" onclick="selectCat(this,'Drinks & Beverages')"><div class="quick-cat-icon">🍷</div><div class="quick-cat-name">Drinks</div></div>
+      <div class="quick-cat" onclick="selectCat(this,'Staff / Payroll')"><div class="quick-cat-icon">👥</div><div class="quick-cat-name">Staff</div></div>
+      <div class="quick-cat" onclick="selectCat(this,'Utilities & Rent')"><div class="quick-cat-icon">💡</div><div class="quick-cat-name">Utilities</div></div>
+      <div class="quick-cat" onclick="selectCat(this,'Equipment & Supplies')"><div class="quick-cat-icon">🔧</div><div class="quick-cat-name">Equipment</div></div>
+      <div class="quick-cat" onclick="selectCat(this,'Other')"><div class="quick-cat-icon">📦</div><div class="quick-cat-name">Other</div></div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <div class="field"><label>Amount ($)</label><input type="number" id="m-amount" placeholder="0.00" step="0.01" min="0"></div>
+        <div class="field"><label>Date</label><input type="date" id="m-date"></div>
+      </div>
+      <div class="field"><label>Supplier / Vendor</label><input type="text" id="m-supplier" placeholder="e.g. Metro Cash & Carry"></div>
+      <div class="field"><label>Category</label>
+        <select id="m-category"><option value="">Select category…</option>
+          <option>Food & Ingredients</option><option>Drinks & Beverages</option>
+          <option>Staff / Payroll</option><option>Utilities & Rent</option>
+          <option>Equipment & Supplies</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Invoice / Reference #</label><input type="text" id="m-ref" placeholder="Optional"></div>
+      <div class="field"><label>Notes</label><textarea id="m-notes" placeholder="Optional notes…"></textarea></div>
+    </div>
+    <button class="btn-primary" onclick="saveManualEntry()">Save Entry</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="view" id="view-history">
+    <p class="section-title">All Entries</p>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="entries-list" id="all-list"></div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="view" id="view-reports">
+    <p class="section-title">Reports</p>
+    <p class="section-sub">Spending breakdown &amp; month closing</p>
+
+    <!-- CLOSE MONTH CARD -->
+    <div class="close-month-card" id="closeMonthCard">
+      <div class="close-month-title">🔒 Close Current Month</div>
+      <div class="close-month-desc">Closing the month <strong>locks all entries</strong> for this period, preventing further changes. A permanent summary is saved to the Archive and you can generate a printable PDF report.</div>
+      <div class="close-month-stats" id="cmStats"></div>
+      <button class="btn-close-month" onclick="openCloseMonthModal()">🔒 Close &amp; Archive Month</button>
+    </div>
+    <div class="locked-notice" id="alreadyLockedNotice" style="display:none">🔒 Current month is already closed. Go to Archive to view or print the report.</div>
+
+    <div class="period-tabs">
+      <div class="period-tab active" onclick="setReportPeriod('week',this)">This Week</div>
+      <div class="period-tab" onclick="setReportPeriod('month',this)">This Month</div>
+      <div class="period-tab" onclick="setReportPeriod('quarter',this)">Quarter</div>
+      <div class="period-tab" onclick="setReportPeriod('all',this)">All Time</div>
+    </div>
+
+    <div class="section-divider">By Category</div>
+    <div class="report-table">
+      <div class="report-table-header"><div>Category</div><div style="text-align:right">Total</div><div style="text-align:right">#</div><div style="text-align:right">%</div></div>
+      <div id="report-rows"></div>
+      <div class="report-total"><div>Total</div><div class="report-total-mono" id="report-grand-total">$0.00</div></div>
+    </div>
+
+    <div class="section-divider">By Supplier</div>
+    <div class="supplier-table">
+      <div class="supplier-header"><div>Supplier</div><div style="text-align:right">Invoices</div><div style="text-align:right">Total</div></div>
+      <div id="supplier-rows"></div>
+    </div>
+
+    <div class="export-row">
+      <button class="export-btn" onclick="exportCSV()">📊 Export CSV</button>
+      <button class="export-btn" onclick="exportJSON()">📁 Export JSON</button>
+    </div>
+  </div>
+
+  <!-- ARCHIVE -->
+  <div class="view" id="view-archive">
+    <p class="section-title">Archive</p>
+    <p class="section-sub">Closed &amp; locked accounting periods</p>
+    <div id="archive-list"></div>
+  </div>
+
+  <!-- RECIPES / PRODUCT STRUCTURE -->
+  <div class="view" id="view-recipes">
+    <p class="section-title">Product Structure</p>
+    <p class="section-sub">Define each menu item with its ingredients and weights</p>
+
+    <!-- CATEGORY FILTER + NEW PRODUCT BTN -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
+      <div class="filter-bar" id="recipeCatFilter" style="margin-bottom:0;flex:1"></div>
+      <button class="btn-new-recipe" onclick="openRecipeModal()">+ New</button>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="field" style="margin-bottom:16px;">
+      <input type="text" id="recipeSearch" placeholder="🔍  Search products…" oninput="renderRecipes()">
+    </div>
+
+    <!-- RECIPE LIST -->
+    <div id="recipe-list"></div>
+  </div>
+
+  <!-- INGREDIENTS LIBRARY -->
+  <div class="view" id="view-ingredients">
+    <p class="section-title">Ingredient Library</p>
+    <p class="section-sub">One master name per ingredient — linked to invoices and recipes</p>
+
+    <!-- STATS -->
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+      <div class="stat-card"><div class="stat-label">Ingredients</div><div class="stat-value" id="istat-total" style="font-size:22px">0</div></div>
+      <div class="stat-card"><div class="stat-label">Aliases</div><div class="stat-value" id="istat-aliases" style="font-size:22px">0</div></div>
+      <div class="stat-card"><div class="stat-label">In Recipes</div><div class="stat-value" id="istat-recipes" style="font-size:22px">0</div></div>
+    </div>
+
+    <!-- UNMATCHED BANNER -->
+    <div id="unmatchedBanner" style="display:none"></div>
+
+    <!-- SEARCH + ADD -->
+    <div style="display:flex;gap:10px;margin-bottom:14px;align-items:center">
+      <div style="position:relative;flex:1">
+        <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none">🔍</span>
+        <input type="text" id="ingSearch" placeholder="Search ingredients or aliases…"
+          style="width:100%;background:white;border:1.5px solid var(--border);border-radius:10px;padding:10px 12px 10px 34px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600"
+          oninput="renderIngredients()">
+      </div>
+      <button class="btn-new-recipe" onclick="openIngModal()">+ New</button>
+    </div>
+
+    <div id="ingredient-list"></div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<!-- INGREDIENT MODAL -->
+<div id="ingModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeIngModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeIngModal()">✕</button>
+      <div class="modal-title" id="ingModalTitle">New Ingredient</div>
+      <div class="modal-sub">Define master name, category and supplier aliases</div>
+      <input type="hidden" id="ing-id">
+
+      <div class="field">
+        <label>Master Name ★</label>
+        <input type="text" id="ing-name" placeholder="e.g. Beef Patty">
+        <div style="font-size:11px;color:var(--warm-gray);font-weight:600;margin-top:4px">This is the ONE name used in recipes and across all invoices</div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Category</label>
+          <select id="ing-cat">
+            <option value="Protein">🥩 Protein</option>
+            <option value="Produce">🥬 Produce</option>
+            <option value="Dairy">🧀 Dairy</option>
+            <option value="Bakery">🍞 Bakery</option>
+            <option value="Condiment">🌶 Condiment</option>
+            <option value="Dry Goods">🌾 Dry Goods</option>
+            <option value="Beverages">🥤 Beverages</option>
+            <option value="Other">📦 Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Default Unit</label>
+          <select id="ing-unit">
+            <option>lb</option><option>kg</option><option>g</option><option>oz</option>
+            <option>unit</option><option>case</option><option>pack</option>
+            <option>L</option><option>ml</option><option>gallon</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Notes (optional)</label>
+        <input type="text" id="ing-notes" placeholder="e.g. 4oz frozen patties">
+      </div>
+
+      <!-- ALIAS MANAGER -->
+      <div style="background:#FFF8F8;border:1.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px">
+        <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:10px">
+          Supplier Aliases — how suppliers call this ingredient
+        </div>
+        <div id="ing-alias-list" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"></div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="ing-alias-input" placeholder="Add supplier name…"
+            style="flex:1;background:white;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600"
+            onkeydown="if(event.key==='Enter')addIngAlias()">
+          <button onclick="addIngAlias()" style="background:var(--red);color:white;border:none;border-radius:8px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer">Add</button>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="saveIngredient()">Save Ingredient</button>
+      <button class="btn-secondary" id="ing-delete-btn" onclick="deleteIngredient()" style="border-color:#FAD7D3;color:var(--red);display:none">🗑 Delete</button>
+      <button class="btn-secondary" onclick="closeIngModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAP UNMATCHED MODAL -->
+<div id="mapModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeMapModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeMapModal()">✕</button>
+      <div class="modal-title">Map Ingredient</div>
+      <div class="modal-sub">Link this supplier name to a master ingredient</div>
+
+      <div style="background:#FFF8F8;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:16px">
+        <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px">Supplier called it</div>
+        <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:500" id="mapRawName"></div>
+      </div>
+
+      <div class="field">
+        <label>Map to master ingredient</label>
+        <select id="mapSelect"></select>
+      </div>
+
+      <div style="text-align:center;font-size:12px;color:var(--warm-gray);font-weight:700;margin:10px 0">— or —</div>
+      <button class="btn-primary" style="background:var(--ink);margin-bottom:4px" onclick="createFromMap()">+ Create New Ingredient</button>
+      <button class="btn-primary" onclick="confirmMap()">Save Mapping</button>
+      <button class="btn-secondary" onclick="closeMapModal()">Skip for now</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLOSE MONTH MODAL -->
+<div id="closeModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-title">Close Month</div>
+      <div class="modal-sub" id="modalMonthName"></div>
+      <div class="warn-box">⚠️ <strong>This cannot be undone.</strong> All entries for this month will be permanently locked. No further additions or edits to this period will be possible.</div>
+      <div id="modalSummary"></div>
+      <div class="field" style="margin-bottom:20px;">
+        <label>Restaurant Name (appears on PDF report)</label>
+        <input type="text" id="restaurantName" placeholder="My Restaurant">
+      </div>
+      <button class="btn-primary" onclick="confirmCloseMonth()">✓ Confirm &amp; Lock Month</button>
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT ENTRY MODAL -->
+<div id="editModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeEditModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+      <div class="modal-title">Edit Entry</div>
+      <div class="modal-sub">Make corrections then save</div>
+      <input type="hidden" id="edit-id">
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="field"><label>Amount ($)</label><input type="number" id="edit-amount" step="0.01" min="0"></div>
+          <div class="field"><label>Date</label><input type="date" id="edit-date"></div>
+        </div>
+        <div class="field"><label>Supplier / Vendor</label><input type="text" id="edit-supplier"></div>
+        <div class="field"><label>Category</label>
+          <select id="edit-category">
+            <option>Food &amp; Ingredients</option><option>Drinks &amp; Beverages</option>
+            <option>Staff / Payroll</option><option>Utilities &amp; Rent</option>
+            <option>Equipment &amp; Supplies</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Invoice / Ref #</label><input type="text" id="edit-ref"></div>
+        <div class="field"><label>Notes</label><textarea id="edit-notes"></textarea></div>
+      </div>
+      <button class="btn-primary" onclick="saveEdit()" style="margin-top:16px">Save Changes</button>
+      <button class="btn-secondary" style="border-color:#FAD7D3;color:var(--red);margin-top:8px" onclick="deleteFromModal()">🗑 Delete This Entry</button>
+      <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECIPE MODAL -->
+<div id="recipeModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeRecipeModal()">
+    <div class="modal" style="max-height:95vh">
+      <button class="modal-close" onclick="closeRecipeModal()">✕</button>
+      <div class="modal-title" id="recipeModalTitle">New Product</div>
+      <div class="modal-sub">Define name, category, and ingredients</div>
+      <input type="hidden" id="r-id">
+
+      <div class="form-grid" style="margin-bottom:20px">
+        <div class="field"><label>Product Name</label><input type="text" id="r-name" placeholder="e.g. Classic Burger"></div>
+        <div class="form-row">
+          <div class="field">
+            <label>Category</label>
+            <select id="r-cat">
+              <option value="Burgers">🍔 Burgers</option>
+              <option value="Sandwiches">🥪 Sandwiches</option>
+              <option value="Tacos">🌮 Tacos</option>
+              <option value="Sides">🍟 Sides</option>
+              <option value="Drinks">🥤 Drinks</option>
+              <option value="Desserts">🍨 Desserts</option>
+              <option value="Other">📦 Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Yield / Portions</label>
+            <input type="number" id="r-yield" placeholder="1" min="1" step="1" value="1">
+          </div>
+        </div>
+        <div class="field"><label>Notes / Description</label><textarea id="r-notes" placeholder="Optional description…" style="min-height:52px"></textarea></div>
+      </div>
+
+      <!-- INGREDIENTS TABLE -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray);font-weight:800">Ingredients</div>
+        <button class="btn-add-ing" onclick="addIngredientRow()">+ Add Ingredient</button>
+      </div>
+
+      <div class="ing-table-wrap">
+        <div class="ing-table-header">
+          <div>Ingredient</div>
+          <div>Qty</div>
+          <div>Unit</div>
+          <div>Notes</div>
+          <div></div>
+        </div>
+        <div id="ing-rows"></div>
+      </div>
+
+      <div class="ing-total-bar" id="ing-total-bar"></div>
+
+      <button class="btn-primary" onclick="saveRecipe()" style="margin-top:20px">Save Product</button>
+      <button class="btn-secondary" id="r-delete-btn" onclick="deleteRecipe()" style="border-color:#FAD7D3;color:var(--red);display:none">🗑 Delete Product</button>
+      <button class="btn-secondary" onclick="closeRecipeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECIPE DETAIL MODAL (view-only) -->
+<div id="recipeDetailModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeRecipeDetail()">
+    <div class="modal" style="max-height:95vh">
+      <button class="modal-close" onclick="closeRecipeDetail()">✕</button>
+      <div id="recipeDetailContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── SUPABASE ─────────────────────────────────────
+const SB_URL = 'https://fxwziozemcynecjbpnww.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4d3ppb3plbWN5bmVjamJwbnd3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MzMwNTgsImV4cCI6MjA5MzQwOTA1OH0.hbELXJ1EsNb69Jh-4AI0fXTEvSMvurB8x0pRqlDJcEc';
+const SB_HEADERS = { 'Content-Type':'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY };
+
+async function sbSelect(table, extra='') {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?order=created_at.desc${extra}`, { headers: SB_HEADERS });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbInsert(table, row) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method:'POST', headers:{...SB_HEADERS,'Prefer':'return=representation'}, body: JSON.stringify(row)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbUpdate(table, id, data) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method:'PATCH', headers:{...SB_HEADERS,'Prefer':'return=representation'}, body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+async function sbDelete(table, id) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method:'DELETE', headers: SB_HEADERS
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+async function sbUpsert(table, row) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method:'POST', headers:{...SB_HEADERS,'Prefer':'resolution=merge-duplicates,return=representation'}, body: JSON.stringify(row)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+// ─── STATE ───────────────────────────────────────
+let entries      = [];
+let archive      = [];
+let lockedMonths = [];
+let currentReportPeriod = 'month';
+let activeFilter = 'All';
+
+const CAT = {
+  'Food & Ingredients':   {icon:'🥩', bar:'bar-food',      dot:'#C9A84C', ic:'icon-food'     },
+  'Drinks & Beverages':   {icon:'🍷', bar:'bar-drinks',    dot:'#A67BB5', ic:'icon-drinks'   },
+  'Staff / Payroll':      {icon:'👥', bar:'bar-staff',     dot:'#5B8DB8', ic:'icon-staff'    },
+  'Utilities & Rent':     {icon:'💡', bar:'bar-utilities', dot:'#7DBD8A', ic:'icon-utilities'},
+  'Equipment & Supplies': {icon:'🔧', bar:'bar-equipment', dot:'#C9856A', ic:'icon-equipment'},
+  'Other':                {icon:'📦', bar:'bar-other',     dot:'#8C8070', ic:'icon-other'    },
+};
+
+// ─── INIT ─────────────────────────────────────────
+async function init() {
+  document.getElementById('headerDate').textContent =
+    new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+  document.getElementById('m-date').value = today();
+  const k = sessionStorage.getItem('mep_apikey');
+  if (k) document.getElementById('apiKeyInput').value = k;
+
+  showLoading(true);
+  try {
+    await ensureTables();
+    await loadAll();
+  } catch(e) {
+    console.error(e);
+    toast('⚠️ Could not connect to database');
+  }
+  showLoading(false);
+}
+
+function showLoading(on) {
+  let el = document.getElementById('loadingBar');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'loadingBar';
+    el.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:3px;background:var(--yellow);z-index:9999;transition:opacity .4s';
+    document.body.appendChild(el);
+  }
+  el.style.opacity = on ? '1' : '0';
+}
+
+async function ensureTables() {
+  // Try a lightweight query to test connection — tables must be created via Supabase SQL editor
+  // We catch the error and show a helpful message
+  try { await sbSelect('tp_entries','&limit=1'); }
+  catch(e) {
+    if (e.message.includes('relation') || e.message.includes('does not exist') || e.message.includes('42P01')) {
+      showSetupBanner();
+    } else { throw e; }
+  }
+}
+
+function showSetupBanner() {
+  const b = document.createElement('div');
+  b.style.cssText = 'background:#FFFDE0;border-bottom:2px solid var(--yellow);padding:14px 20px;font-size:13px;font-weight:700;color:#856404;text-align:center;z-index:500;position:relative';
+  b.innerHTML = `⚠️ Database tables not set up yet. <a href="#" onclick="showSQLInstructions();return false" style="color:var(--red);text-decoration:underline">Tap here for setup instructions</a>`;
+  document.body.insertBefore(b, document.querySelector('nav'));
+}
+
+function showSQLInstructions() {
+  alert(`To finish setup, run this SQL in your Supabase project:\n\n` +
+  `1. Go to supabase.com → your project\n` +
+  `2. Click "SQL Editor" in the left sidebar\n` +
+  `3. Paste and run the following:\n\n` +
+  `-- Entries table\n` +
+  `create table if not exists tp_entries (\n` +
+  `  id text primary key,\n` +
+  `  date text, supplier text, category text,\n` +
+  `  amount numeric, ref text, notes text, source text,\n` +
+  `  created_at timestamptz default now()\n` +
+  `);\n\n` +
+  `-- Archive table\n` +
+  `create table if not exists tp_archive (\n` +
+  `  id text primary key,\n` +
+  `  month_key text, month_name text, closed_at text,\n` +
+  `  restaurant_name text, total numeric, entry_count int,\n` +
+  `  by_category jsonb, by_supplier_data jsonb, entries jsonb,\n` +
+  `  created_at timestamptz default now()\n` +
+  `);\n\n` +
+  `-- Locked months table\n` +
+  `create table if not exists tp_locked (\n` +
+  `  month_key text primary key,\n` +
+  `  created_at timestamptz default now()\n` +
+  `);\n\n` +
+  `-- Recipes table\n` +
+  `create table if not exists tp_recipes (\n` +
+  `  id text primary key,\n` +
+  `  name text, category text, yield int,\n` +
+  `  notes text, ingredients jsonb,\n` +
+  `  created_at timestamptz default now(),\n` +
+  `  updated_at timestamptz default now()\n` +
+  `);\n\n` +
+  `-- Ingredients library table\n` +
+  `create table if not exists tp_ingredients (\n` +
+  `  id text primary key,\n` +
+  `  name text, category text, unit text,\n` +
+  `  notes text, aliases jsonb default '[]',\n` +
+  `  last_price numeric default 0,\n` +
+  `  last_price_date text,\n` +
+  `  prev_price numeric default 0,\n` +
+  `  created_at timestamptz default now()\n` +
+  `);\n\n` +
+  `-- Allow public access (anon key)\n` +
+  `alter table tp_entries  enable row level security;\n` +
+  `alter table tp_archive  enable row level security;\n` +
+  `alter table tp_locked   enable row level security;\n` +
+  `alter table tp_recipes  enable row level security;\n\n` +
+  `create policy "allow all" on tp_entries  for all using (true) with check (true);\n` +
+  `create policy "allow all" on tp_archive  for all using (true) with check (true);\n` +
+  `create policy "allow all" on tp_locked   for all using (true) with check (true);\n` +
+  `create policy "allow all" on tp_recipes  for all using (true) with check (true);\n` +
+  `create policy "allow all" on tp_ingredients for all using (true) with check (true);`
+  );
+}
+
+async function loadAll() {
+  const [rawEntries, rawArchive, rawLocked, rawRecipes] = await Promise.all([
+    sbSelect('tp_entries'),
+    sbSelect('tp_archive'),
+    sbSelect('tp_locked'),
+    sbSelect('tp_recipes'),
+  ]);
+  entries      = rawEntries.map(e => ({
+    id:e.id, date:e.date, supplier:e.supplier, category:e.category,
+    amount:parseFloat(e.amount), ref:e.ref||'', notes:e.notes||'', source:e.source||'manual',
+    items:e.items||[]
+  }));
+  archive      = rawArchive.map(a => ({
+    id:a.id, monthKey:a.month_key, monthName:a.month_name, closedAt:a.closed_at,
+    restaurantName:a.restaurant_name, total:parseFloat(a.total), entryCount:a.entry_count,
+    byCategory:a.by_category, bySupplierData:a.by_supplier_data, entries:a.entries
+  }));
+  lockedMonths = rawLocked.map(r => r.month_key);
+  recipes      = rawRecipes.map(r => ({
+    id:r.id, name:r.name, category:r.category, yield:r.yield||1,
+    notes:r.notes||'', ingredients:r.ingredients||[],
+    createdAt:r.created_at, updatedAt:r.updated_at
+  }));
+  await loadIngredients();
+
+  if (entries.length === 0) await seedSampleData();
+  refreshAll();
+}
+
+function refreshAll() { refreshDashboard(); refreshHistory(); refreshReports(); refreshArchive(); refreshRecipes(); refreshIngredients(); }
+
+async function seedSampleData() {
+  const samples = [
+    {id:uid(),date:daysAgo(1), supplier:'Metro Cash & Carry', category:'Food & Ingredients',   amount:342.50,ref:'INV-2024',notes:'',         source:'manual'},
+    {id:uid(),date:daysAgo(2), supplier:'City Gas Co.',        category:'Utilities & Rent',     amount:189.00,ref:'',        notes:'Gas bill', source:'manual'},
+    {id:uid(),date:daysAgo(3), supplier:'Staff Wages',         category:'Staff / Payroll',      amount:1200.0,ref:'',        notes:'Wk 18',    source:'manual'},
+    {id:uid(),date:daysAgo(5), supplier:'Frutería del Sur',    category:'Food & Ingredients',   amount:128.30,ref:'FS-0091',notes:'Produce',   source:'manual'},
+    {id:uid(),date:daysAgo(7), supplier:'Vinos y Más',         category:'Drinks & Beverages',   amount:475.00,ref:'VM-332', notes:'',          source:'manual'},
+    {id:uid(),date:daysAgo(10),supplier:'Rent — May',          category:'Utilities & Rent',     amount:2200.0,ref:'',        notes:'',          source:'manual'},
+    {id:uid(),date:daysAgo(12),supplier:'Estrella Damm',       category:'Drinks & Beverages',   amount:210.00,ref:'',        notes:'Beer',      source:'manual'},
+    {id:uid(),date:daysAgo(15),supplier:'Kitchen Depot',       category:'Equipment & Supplies', amount:89.99, ref:'KD-5511',notes:'Boards x4', source:'manual'},
+  ];
+  await Promise.all(samples.map(e => sbInsert('tp_entries', {
+    id:e.id, date:e.date, supplier:e.supplier, category:e.category,
+    amount:e.amount, ref:e.ref, notes:e.notes, source:e.source
+  })));
+  entries = samples;
+}
+
+async function save() {
+  // no-op — individual operations write directly to Supabase
+}
+
+function today()    { return new Date().toISOString().split('T')[0]; }
+function daysAgo(n) { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().split('T')[0]; }
+function uid()      { return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+
+// ─── NAV ──────────────────────────────────────────
+function showView(name, el) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  if (el) el.classList.add('active');
+  if (name==='dashboard') refreshDashboard();
+  if (name==='history')   refreshHistory();
+  if (name==='reports')   refreshReports();
+  if (name==='archive')     refreshArchive();
+  if (name==='recipes')     refreshRecipes();
+  if (name==='ingredients') refreshIngredients();
+}
+
+// ─── DASHBOARD ────────────────────────────────────
+function refreshDashboard() {
+  const now = new Date();
+  const monthKey = mkKey(now);
+  const isLocked = lockedMonths.includes(monthKey);
+  document.getElementById('dash-period').textContent = now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  document.getElementById('locked-notice-dash').innerHTML = isLocked
+    ? `<div class="locked-notice">🔒 This month is closed and locked.</div>` : '';
+
+  const soM = new Date(now.getFullYear(),now.getMonth(),1);
+  const soW = new Date(now); soW.setDate(now.getDate()-7);
+  const mE = entries.filter(e=>new Date(e.date)>=soM);
+  const wE = entries.filter(e=>new Date(e.date)>=soW);
+
+  document.getElementById('stat-month').textContent   = fmt(sum(mE));
+  document.getElementById('stat-week').textContent    = fmt(sum(wE));
+  document.getElementById('stat-entries').textContent = mE.length+' entries this month';
+
+  const bycat  = byCat(mE);
+  const sorted = Object.entries(bycat).sort((a,b)=>b[1]-a[1]);
+  const grand  = sum(mE);
+
+  if (sorted.length) {
+    document.getElementById('stat-top-cat').textContent = sorted[0][0];
+    document.getElementById('stat-top-amt').textContent = fmt(sorted[0][1])+' this month';
+  }
+
+  const maxV = sorted.length ? sorted[0][1] : 1;
+  document.getElementById('breakdown-bars').innerHTML = sorted.length
+    ? sorted.map(([cat,total])=>{
+        const c=CAT[cat]||CAT['Other'];
+        return `<div class="bar-row">
+          <div class="bar-meta"><span class="bar-name">${c.icon} ${cat}</span><span class="bar-amount">${fmt(total)} · ${grand>0?Math.round(total/grand*100):0}%</span></div>
+          <div class="bar-track"><div class="bar-fill ${c.bar}" style="width:${Math.round(total/maxV*100)}%"></div></div>
+        </div>`;
+      }).join('')
+    : '<div style="color:var(--warm-gray);font-size:13px">No data yet</div>';
+
+  const recent = [...entries].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
+  document.getElementById('recent-list').innerHTML = recent.length
+    ? recent.map(eCard).join('')
+    : '<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No entries yet</div></div>';
+}
+
+function eCard(e) {
+  const c=CAT[e.category]||CAT['Other'];
+  const locked=lockedMonths.includes(keyFromStr(e.date));
+  const lockBadge=locked?'<span style="font-size:10px;color:var(--green);margin-left:4px">🔒</span>':'';
+  // Locked entries can still be viewed but not edited/deleted
+  const actions=locked
+    ? `<div class="entry-actions" id="ea-${e.id}">
+        <button class="entry-action-btn btn-edit-entry" style="background:var(--warm-gray)" onclick="openEdit('${e.id}',true)"><span class="entry-action-icon">👁</span>View</button>
+       </div>`
+    : `<div class="entry-actions" id="ea-${e.id}">
+        <button class="entry-action-btn btn-edit-entry" onclick="openEdit('${e.id}',false)"><span class="entry-action-icon">✏️</span>Edit</button>
+        <button class="entry-action-btn btn-del-entry"  onclick="deleteEntry('${e.id}')"><span class="entry-action-icon">🗑</span>Delete</button>
+       </div>`;
+  return `<div class="entry-card-wrap" id="wrap-${e.id}" data-id="${e.id}">
+    <div class="entry-card has-actions" id="card-${e.id}" onclick="toggleActions('${e.id}')">
+      <div class="entry-icon ${c.ic}">${c.icon}</div>
+      <div class="entry-info">
+        <div class="entry-supplier">${e.supplier||'—'}${lockBadge}</div>
+        <div class="entry-meta">${e.category} · ${fmtDate(e.date)}${e.ref?' · #'+e.ref:''}</div>
+      </div>
+      <div class="entry-amount">${fmt(e.amount)}</div>
+    </div>
+    ${actions}
+  </div>`;
+}
+
+let openActionId = null;
+function toggleActions(id) {
+  // close any other open action
+  if (openActionId && openActionId!==id) {
+    const prev=document.getElementById('ea-'+openActionId);
+    if(prev){prev.classList.remove('visible'); document.getElementById('card-'+openActionId)?.classList.remove('active-actions');}
+  }
+  const el=document.getElementById('ea-'+id);
+  const card=document.getElementById('card-'+id);
+  if(!el) return;
+  const isOpen=el.classList.contains('visible');
+  el.classList.toggle('visible');
+  card?.classList.toggle('active-actions', !isOpen);
+  openActionId=isOpen?null:id;
+}
+
+// close actions on outside click
+document.addEventListener('click',function(ev){
+  if(openActionId && !ev.target.closest('.entry-card-wrap')){
+    const el=document.getElementById('ea-'+openActionId);
+    const card=document.getElementById('card-'+openActionId);
+    if(el){el.classList.remove('visible'); card?.classList.remove('active-actions');}
+    openActionId=null;
+  }
+});
+
+// ─── SCAN ─────────────────────────────────────────
+const ANTHROPIC_KEY = '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';
+
+let scanPages = []; // array of {dataUrl, b64, mt}
+
+function saveApiKey() {}
+
+function handleDrop(ev) {
+  ev.preventDefault();
+  document.getElementById('scanZone').classList.remove('drag-over');
+  const files = Array.from(ev.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
+  files.forEach(loadScanFile);
+}
+
+function addScanFile(ev)  { const f=ev.target.files[0]; if(f) loadScanFile(f); ev.target.value=''; }
+function addScanFiles(ev) { Array.from(ev.target.files).forEach(loadScanFile); ev.target.value=''; }
+
+function loadScanFile(file) {
+  if (!file.type.startsWith('image/')) { toast('Please use image files only'); return; }
+  if (file.size > 15*1024*1024) { toast('File too large (max 15MB)'); return; }
+  if (scanPages.length >= 8) { toast('Max 8 pages per invoice'); return; }
+  const r = new FileReader();
+  r.onload = async (ev) => {
+    const dataUrl = ev.target.result;
+    const { b64, mt } = await compressImage(dataUrl, file.type);
+    scanPages.push({ dataUrl, b64, mt, name: file.name });
+    renderThumbs();
+  };
+  r.readAsDataURL(file);
+}
+
+function renderThumbs() {
+  const strip = document.getElementById('thumbStrip');
+  const list  = document.getElementById('thumbList');
+  const count = document.getElementById('thumbCount');
+  document.getElementById('scanZone').style.display = scanPages.length ? 'none' : 'block';
+  strip.style.display = scanPages.length ? 'block' : 'none';
+  count.textContent = scanPages.length + (scanPages.length===1?' page':' pages');
+  list.innerHTML = scanPages.map((p,i) => `
+    <div style="position:relative;flex-shrink:0">
+      <img src="${p.dataUrl}" style="width:72px;height:90px;object-fit:cover;border-radius:8px;border:2px solid var(--border)">
+      <div style="position:absolute;top:2px;left:4px;background:var(--red);color:white;font-size:9px;font-weight:800;border-radius:4px;padding:1px 5px">${i+1}</div>
+      <button onclick="removePage(${i})" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.6);border:none;color:white;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center">×</button>
+    </div>`).join('');
+}
+
+function removePage(i) {
+  scanPages.splice(i,1);
+  renderThumbs();
+  if (scanPages.length===0) resetScan();
+}
+
+async function startScan() {
+  if (!scanPages.length) { toast('Add at least one image'); return; }
+  document.getElementById('thumbStrip').style.display='none';
+  document.getElementById('aiResult').classList.remove('show');
+  document.getElementById('analyzingOverlay').classList.add('show');
+
+  try {
+    let data;
+    if (scanPages.length === 1) {
+      document.getElementById('analyzingText').textContent = 'Reading invoice page 1…';
+      data = await callClaude([scanPages[0]]);
+    } else {
+      // Scan all pages, merge results
+      document.getElementById('analyzingText').textContent = `Reading ${scanPages.length} pages…`;
+      const results = [];
+      for (let i=0; i<scanPages.length; i++) {
+        document.getElementById('analyzingText').textContent = `Reading page ${i+1} of ${scanPages.length}…`;
+        const r = await callClaude([scanPages[i]], i>0 ? results[0] : null);
+        results.push(r);
+      }
+      data = mergeResults(results);
+    }
+
+    populateForm(data);
+    renderLineItems(data.items||[]);
+
+    const statusEl = document.getElementById('aiStatus');
+    if (data._confident) {
+      statusEl.textContent = `✓ ${scanPages.length>1?scanPages.length+' pages read — ':''}${(data.items||[]).length} items extracted`;
+      statusEl.style.color = 'var(--green)';
+    } else {
+      statusEl.textContent = '⚠️ Some fields need your attention';
+      statusEl.style.color = '#E67E22';
+    }
+    document.getElementById('aiResult').classList.add('show');
+    toast('✓ Invoice analyzed!');
+  } catch(err) {
+    console.error('Scan error:', err);
+    populateForm({});
+    renderLineItems([]);
+    document.getElementById('aiResult').classList.add('show');
+    const statusEl = document.getElementById('aiStatus');
+    statusEl.textContent = '❌ ' + (err.message||'Unknown error');
+    statusEl.style.color = 'var(--red)';
+    toast('Error: ' + (err.message||'').slice(0,60));
+  } finally {
+    document.getElementById('analyzingOverlay').classList.remove('show');
+  }
+}
+
+function mergeResults(results) {
+  // Use first page for header info, merge all line items
+  const base = results[0];
+  const allItems = results.flatMap(r => r.items||[]);
+  // Recalculate total from items if we have them
+  const itemTotal = allItems.reduce((s,i)=>s+(i.price||0),0);
+  return {
+    ...base,
+    items: allItems,
+    amount: itemTotal > 0 ? Math.round(itemTotal*100)/100 : base.amount,
+    _confident: results.every(r=>r._confident),
+    notes: results.map(r=>r.notes).filter(Boolean).join('; ')
+  };
+}
+
+async function callClaude(pages, prevData=null) {
+  const prompt = `You are an expert at reading restaurant invoices, receipts, and supplier bills.
+
+Analyze this invoice image and extract ALL information. The business is "Tu Pepito", a US burger/sandwich/taco restaurant. Currency is USD.
+
+${prevData ? `CONTEXT: This is a continuation page of the same invoice. Header info already extracted: supplier="${prevData.supplier}", date="${prevData.date}", ref="${prevData.ref}". Focus on extracting MORE line items from this page.` : ''}
+
+Extract these fields:
+- supplier: vendor/company name (NOT "Tu Pepito")
+- amount: GRAND TOTAL as number only (including tax)
+- date: invoice date as YYYY-MM-DD
+- ref: invoice/folio number
+- category: ONE of: "Food & Ingredients", "Drinks & Beverages", "Staff / Payroll", "Utilities & Rent", "Equipment & Supplies", "Other"
+- notes: 1-line summary of what was purchased
+- subtotal: pre-tax total (number)
+- tax: tax amount (number)
+- items: array of ALL line items found on this page, each with:
+  { "name": "item name", "qty": number, "unit": "kg/lb/unit/case/box/etc", "unit_price": price per unit, "price": total line price }
+- _confident: true if main fields (supplier, amount, date) are clearly readable
+
+RULES:
+- Extract EVERY line item you can see — be thorough
+- For items, if qty or unit_price is not visible, estimate from the total or leave as null
+- Respond ONLY with valid JSON, no markdown
+
+Example:
+{"supplier":"Metro Foods","amount":342.50,"date":"2025-05-01","ref":"INV-001","category":"Food & Ingredients","notes":"Weekly produce and protein order","subtotal":315.00,"tax":27.50,"items":[{"name":"Beef Patties 4oz","qty":10,"unit":"case","unit_price":24.50,"price":245.00},{"name":"Brioche Buns","qty":5,"unit":"pack","unit_price":14.00,"price":70.00}],"_confident":true}`;
+
+  const content = pages.map(p => ({type:'image', source:{type:'base64', media_type:p.mt, data:p.b64}}));
+  content.push({type:'text', text:prompt});
+
+  let res;
+  try {
+    res = await fetch('/.netlify/functions/scan', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1500, messages:[{role:'user', content}] })
+    });
+  } catch(e) { throw new Error('Network error: '+e.message); }
+
+  if (!res.ok) {
+    const body = await res.text().catch(()=>'');
+    let msg = `HTTP ${res.status}`;
+    try { const j=JSON.parse(body); msg=j.error?.message||msg; } catch(e){}
+    throw new Error(msg);
+  }
+
+  const data = await res.json();
+  const text = data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+  try { return JSON.parse(text); }
+  catch(e) {
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) return JSON.parse(match[0]);
+    throw new Error('Could not parse AI response');
+  }
+}
+
+// Compress image
+async function compressImage(dataUrl, mimeType) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 1600;
+      let w=img.width, h=img.height;
+      if (w>MAX||h>MAX) { if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+      canvas.width=w; canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      resolve({b64:canvas.toDataURL('image/jpeg',0.85).split(',')[1], mt:'image/jpeg'});
+    };
+    img.onerror=()=>resolve({b64:dataUrl.split(',')[1], mt:mimeType});
+    img.src=dataUrl;
+  });
+}
+
+// ── LINE ITEMS ──
+function renderLineItems(items) {
+  const section = document.getElementById('lineItemsSection');
+  section.style.display = 'block';
+  const rows = document.getElementById('lineItemRows');
+
+  if (items.length) {
+    rows.innerHTML = items.map((_,i)=>lineItemRowHTML(i,items[i])).join('');
+  } else {
+    rows.innerHTML = '';
+    addLineItemRow(); // start with one blank
+  }
+  updateLineTotal();
+}
+
+function lineItemRowHTML(i, item={}) {
+  const rowId = 'li-'+i+'-'+Date.now();
+  return `<div class="li-row" id="${rowId}" style="display:grid;grid-template-columns:2fr 60px 80px 80px 36px;gap:4px;padding:7px 10px;border-bottom:1px solid #FFE8E6;align-items:center">
+    <input class="li-name" type="text" placeholder="Item name" value="${item.name||''}" style="background:white;border:1.5px solid var(--border);border-radius:6px;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;width:100%" oninput="updateLineTotal()">
+    <input class="li-qty"  type="number" placeholder="1" value="${item.qty||''}" step="any" min="0" style="background:white;border:1.5px solid var(--border);border-radius:6px;padding:6px 4px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;width:100%;text-align:center" oninput="updateLineTotal()">
+    <input class="li-unit" type="text" placeholder="unit" value="${item.unit||''}" style="background:white;border:1.5px solid var(--border);border-radius:6px;padding:6px 6px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;width:100%">
+    <input class="li-price" type="number" placeholder="0.00" value="${item.price||''}" step="0.01" min="0" style="background:white;border:1.5px solid var(--border);border-radius:6px;padding:6px 4px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;width:100%;text-align:right" oninput="updateLineTotal()">
+    <button onclick="this.closest('.li-row').remove();updateLineTotal()" style="background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='#ccc'">×</button>
+  </div>`;
+}
+
+function addLineItemRow() {
+  const rows = document.getElementById('lineItemRows');
+  const div = document.createElement('div');
+  div.innerHTML = lineItemRowHTML(Date.now());
+  rows.appendChild(div.firstElementChild);
+  updateLineTotal();
+}
+
+function updateLineTotal() {
+  const rows = document.querySelectorAll('#lineItemRows .li-row');
+  let total = 0;
+  rows.forEach(r => { total += parseFloat(r.querySelector('.li-price')?.value)||0; });
+  const el = document.getElementById('lineItemTotal');
+  if (total > 0) {
+    el.style.display='block';
+    el.innerHTML = `🧮 Items total: <strong>$${total.toFixed(2)}</strong> — <span style="color:var(--warm-gray);font-weight:600">adjust the invoice total above if needed</span>`;
+    // auto-update amount field if empty
+    const amtField = document.getElementById('s-amount');
+    if (amtField && !amtField.dataset.manuallyEdited) amtField.value = total.toFixed(2);
+  } else {
+    el.style.display='none';
+  }
+}
+
+function getLineItems() {
+  const rows = document.querySelectorAll('#lineItemRows .li-row');
+  const items = [];
+  rows.forEach(r => {
+    const name = r.querySelector('.li-name')?.value.trim();
+    if (!name) return;
+    items.push({
+      name,
+      qty:   parseFloat(r.querySelector('.li-qty')?.value)||null,
+      unit:  r.querySelector('.li-unit')?.value.trim()||null,
+      price: parseFloat(r.querySelector('.li-price')?.value)||null,
+    });
+  });
+  return items;
+}
+
+function populateForm(d) {
+  const hasData = d && (d.amount||d.supplier||d.date);
+  document.getElementById('scannedForm').innerHTML = `
+    <div class="form-row">
+      <div class="field">
+        <label>Amount (USD $)</label>
+        <input type="number" id="s-amount" value="${d.amount||''}" placeholder="0.00" step="0.01"
+          style="${!d.amount?'border-color:var(--yellow)':''}"
+          oninput="this.dataset.manuallyEdited=1">
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input type="date" id="s-date" value="${d.date||today()}"
+          style="${!d.date?'border-color:var(--yellow)':''}">
+      </div>
+    </div>
+    ${d.subtotal||d.tax?`
+    <div class="form-row">
+      <div class="field"><label>Subtotal</label><input type="number" value="${d.subtotal||''}" placeholder="0.00" step="0.01" style="background:#FAF8F8;color:var(--warm-gray)" disabled></div>
+      <div class="field"><label>Tax</label><input type="number" value="${d.tax||''}" placeholder="0.00" step="0.01" style="background:#FAF8F8;color:var(--warm-gray)" disabled></div>
+    </div>`:''}
+    <div class="field">
+      <label>Supplier</label>
+      <input type="text" id="s-supplier" value="${d.supplier||''}" placeholder="Vendor name"
+        style="${!d.supplier?'border-color:var(--yellow)':''}">
+    </div>
+    <div class="field"><label>Category</label>
+      <select id="s-category">
+        <option value="">Select…</option>
+        ${Object.keys(CAT).map(c=>`<option ${c===d.category?'selected':''}>${c}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field"><label>Invoice / Ref #</label><input type="text" id="s-ref" value="${d.ref||''}" placeholder="Optional"></div>
+    <div class="field"><label>Notes</label><textarea id="s-notes" placeholder="What was purchased…">${d.notes||''}</textarea></div>
+    ${!hasData?'<div style="background:#FFFDE0;border:1px solid var(--yellow);border-radius:8px;padding:10px 12px;font-size:12px;color:#856404;font-weight:600">⚠️ AI could not read this image. Try a clearer photo or fill in manually.</div>':''}
+  `;
+}
+
+async function saveScannedEntry() {
+  const amt=parseFloat(document.getElementById('s-amount').value);
+  if(!amt||amt<=0){toast('Enter a valid amount');return;}
+  const dv=document.getElementById('s-date').value;
+  if(lockedMonths.includes(keyFromStr(dv))){toast('⚠️ This month is locked');return;}
+  const items = getLineItems();
+  // Match items to master ingredient library
+  const unmatched = matchLineItemsToIngredients(items);
+  const entry={
+    id:uid(), date:dv||today(),
+    supplier:document.getElementById('s-supplier').value||'Unknown',
+    category:document.getElementById('s-category').value||'Other',
+    amount:amt,
+    ref:document.getElementById('s-ref').value,
+    notes:document.getElementById('s-notes').value,
+    source:'scan', items
+  };
+  showLoading(true);
+  try {
+    await sbInsert('tp_entries',{
+      id:entry.id, date:entry.date, supplier:entry.supplier, category:entry.category,
+      amount:entry.amount, ref:entry.ref, notes:entry.notes, source:entry.source, items:entry.items
+    });
+    entries.unshift(entry);
+    // Update ingredient prices from invoice items
+    await updateIngredientPrices(items, dv||today());
+    const unmatchedCount = (unmatched||[]).length;
+    toast(`✓ Saved${items.length?' · '+items.length+' items':''}${unmatchedCount?' · ⚠️ '+unmatchedCount+' unmatched':''}`);
+    setTimeout(resetScan, 800);
+    refreshAll();
+    // Prompt to map unmatched items
+    if (unmatchedCount > 0) {
+      setTimeout(()=>{
+        if(confirm(`${unmatchedCount} invoice item${unmatchedCount!==1?'s':''} couldn't be matched to your ingredient library.\n\nGo to Ingredients tab to map them?`)) {
+          document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+          document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+          document.getElementById('view-ingredients').classList.add('active');
+          refreshIngredients();
+        }
+      }, 1000);
+    }
+  } catch(e){ toast('Error saving: '+e.message); }
+  showLoading(false);
+}
+
+function resetScan() {
+  scanPages=[];
+  document.getElementById('scanZone').style.display='block';
+  document.getElementById('thumbStrip').style.display='none';
+  document.getElementById('thumbList').innerHTML='';
+  document.getElementById('aiResult').classList.remove('show');
+  document.getElementById('fileInputCamera').value='';
+  document.getElementById('fileInputGallery').value='';
+}
+
+// ─── MANUAL ENTRY ─────────────────────────────────
+function selectCat(el,cat) {
+  document.querySelectorAll('.quick-cat').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected'); document.getElementById('m-category').value=cat;
+}
+
+async function saveManualEntry() {
+  const amt=parseFloat(document.getElementById('m-amount').value);
+  if(!amt||amt<=0){toast('Enter a valid amount');return;}
+  const cat=document.getElementById('m-category').value;
+  if(!cat){toast('Select a category');return;}
+  const dv=document.getElementById('m-date').value;
+  if(lockedMonths.includes(keyFromStr(dv))){toast('⚠️ This month is locked');return;}
+  const entry={id:uid(),date:dv||today(),supplier:document.getElementById('m-supplier').value||'Unknown',category:cat,amount:amt,ref:document.getElementById('m-ref').value,notes:document.getElementById('m-notes').value,source:'manual'};
+  showLoading(true);
+  try {
+    await sbInsert('tp_entries',{id:entry.id,date:entry.date,supplier:entry.supplier,category:entry.category,amount:entry.amount,ref:entry.ref,notes:entry.notes,source:entry.source});
+    entries.unshift(entry);
+    toast('✓ Entry saved!');
+    ['m-amount','m-supplier','m-ref','m-notes'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('m-category').value=''; document.getElementById('m-date').value=today();
+    document.querySelectorAll('.quick-cat').forEach(e=>e.classList.remove('selected'));
+    refreshAll();
+  } catch(e){ toast('Error saving: '+e.message); }
+  showLoading(false);
+}
+
+// ─── HISTORY ──────────────────────────────────────
+function refreshHistory() {
+  const cats=['All',...Object.keys(CAT)];
+  document.getElementById('filterBar').innerHTML=cats.map(c=>`<div class="filter-chip ${c===activeFilter?'active':''}" onclick="setFilter('${c}')">${c}</div>`).join('');
+  const filtered=activeFilter==='All'?entries:entries.filter(e=>e.category===activeFilter);
+  const sorted=[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('all-list').innerHTML=sorted.length?sorted.map(eCard).join(''):'<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No entries</div></div>';
+}
+function setFilter(cat){activeFilter=cat;refreshHistory();}
+
+// ─── REPORTS ──────────────────────────────────────
+function setReportPeriod(p,el){
+  currentReportPeriod=p;
+  document.querySelectorAll('.period-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active'); refreshReports();
+}
+
+function getPeriodEntries(p) {
+  const now=new Date();
+  if(p==='week'){const s=new Date(now);s.setDate(now.getDate()-7);return entries.filter(e=>new Date(e.date)>=s);}
+  if(p==='month'){const s=new Date(now.getFullYear(),now.getMonth(),1);return entries.filter(e=>new Date(e.date)>=s);}
+  if(p==='quarter'){const s=new Date(now);s.setMonth(now.getMonth()-3);return entries.filter(e=>new Date(e.date)>=s);}
+  return entries;
+}
+
+function refreshReports() {
+  const filtered=getPeriodEntries(currentReportPeriod);
+  const grand=sum(filtered);
+  const sorted=Object.entries(byCat(filtered)).sort((a,b)=>b[1]-a[1]);
+
+  document.getElementById('report-rows').innerHTML=sorted.length?sorted.map(([cat,total])=>{
+    const c=CAT[cat]||CAT['Other'], count=filtered.filter(e=>e.category===cat).length;
+    return `<div class="report-row">
+      <div class="report-cat"><div class="cat-dot" style="background:${c.dot}"></div><span>${cat}</span></div>
+      <div class="report-mono">${fmt(total)}</div>
+      <div class="report-mono report-pct">${count}</div>
+      <div class="report-mono report-pct">${grand>0?Math.round(total/grand*100):0}%</div>
+    </div>`;
+  }).join(''):'<div class="empty" style="padding:24px"><div class="empty-text">No data</div></div>';
+  document.getElementById('report-grand-total').textContent=fmt(grand);
+
+  const bySup=bySupplier(filtered);
+  const supSorted=Object.entries(bySup).sort((a,b)=>b[1].total-a[1].total);
+  document.getElementById('supplier-rows').innerHTML=supSorted.length?supSorted.map(([s,i])=>`
+    <div class="supplier-row"><div>${s}</div><div class="report-mono report-pct">${i.count}</div><div class="report-mono">${fmt(i.total)}</div></div>`).join('')
+    :'<div class="empty" style="padding:24px"><div class="empty-text">No data</div></div>';
+
+  // Close Month card
+  const now=new Date();
+  const monthKey=mkKey(now);
+  const isLocked=lockedMonths.includes(monthKey);
+  const soM=new Date(now.getFullYear(),now.getMonth(),1);
+  const mE=entries.filter(e=>new Date(e.date)>=soM);
+
+  document.getElementById('closeMonthCard').style.display=isLocked?'none':'block';
+  document.getElementById('alreadyLockedNotice').style.display=isLocked?'flex':'none';
+  document.getElementById('cmStats').innerHTML=`
+    <div class="cm-stat"><div class="cm-stat-val">${fmt(sum(mE))}</div><div class="cm-stat-lbl">Total</div></div>
+    <div class="cm-stat"><div class="cm-stat-val">${mE.length}</div><div class="cm-stat-lbl">Entries</div></div>
+    <div class="cm-stat"><div class="cm-stat-val">${Object.keys(byCat(mE)).length}</div><div class="cm-stat-lbl">Categories</div></div>`;
+}
+
+// ─── CLOSE MONTH ──────────────────────────────────
+function openCloseMonthModal() {
+  const now=new Date();
+  const mn=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  document.getElementById('modalMonthName').textContent=mn;
+  const soM=new Date(now.getFullYear(),now.getMonth(),1);
+  const mE=entries.filter(e=>new Date(e.date)>=soM);
+  const grand=sum(mE);
+  const sorted=Object.entries(byCat(mE)).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('modalSummary').innerHTML=`
+    <div class="report-table" style="margin-bottom:20px">
+      <div class="report-table-header"><div>Category</div><div style="text-align:right">Total</div><div style="text-align:right">#</div><div style="text-align:right">%</div></div>
+      ${sorted.map(([cat,total])=>{
+        const c=CAT[cat]||CAT['Other'], count=mE.filter(e=>e.category===cat).length;
+        return `<div class="report-row"><div class="report-cat"><div class="cat-dot" style="background:${c.dot}"></div><span>${cat}</span></div><div class="report-mono">${fmt(total)}</div><div class="report-mono report-pct">${count}</div><div class="report-mono report-pct">${grand>0?Math.round(total/grand*100):0}%</div></div>`;
+      }).join('')}
+      <div class="report-total"><div>Grand Total</div><div class="report-total-mono">${fmt(grand)}</div></div>
+    </div>`;
+  document.getElementById('closeModal').style.display='block';
+}
+
+function closeModal() { document.getElementById('closeModal').style.display='none'; }
+
+function confirmCloseMonth() { _confirmCloseMonth(); }
+async function _confirmCloseMonth() {
+  const now=new Date();
+  const monthKey=mkKey(now);
+  const monthName=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const soM=new Date(now.getFullYear(),now.getMonth(),1);
+  const mE=entries.filter(e=>new Date(e.date)>=soM);
+  const rName=document.getElementById('restaurantName').value||'Tu Pepito';
+  if(mE.length===0){toast('No entries to close');return;}
+  showLoading(true);
+  try {
+    await sbUpsert('tp_locked',{month_key:monthKey});
+    if(!lockedMonths.includes(monthKey)) lockedMonths.push(monthKey);
+    const archRec={
+      id:uid(), monthKey, monthName, closedAt:new Date().toISOString(),
+      restaurantName:rName, total:sum(mE), entryCount:mE.length,
+      byCategory:byCat(mE), bySupplierData:bySupplier(mE), entries:[...mE]
+    };
+    await sbInsert('tp_archive',{
+      id:archRec.id, month_key:archRec.monthKey, month_name:archRec.monthName,
+      closed_at:archRec.closedAt, restaurant_name:archRec.restaurantName,
+      total:archRec.total, entry_count:archRec.entryCount,
+      by_category:archRec.byCategory, by_supplier_data:archRec.bySupplierData,
+      entries:archRec.entries
+    });
+    archive.unshift(archRec);
+    closeModal(); toast('✓ Month closed and archived!'); refreshAll();
+    setTimeout(()=>printReport(archive[0]),700);
+  } catch(e){ toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+// ─── ARCHIVE ──────────────────────────────────────
+function refreshArchive() {
+  const el=document.getElementById('archive-list');
+  if(!archive.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">🗄</div><div class="empty-text">No closed months yet.<br>Close a month from the Reports tab.</div></div>';
+    return;
+  }
+  el.innerHTML=archive.map(a=>{
+    const chips=Object.entries(a.byCategory).sort((x,y)=>y[1]-x[1]).map(([cat,total])=>{
+      const c=CAT[cat]||CAT['Other'];
+      return `<span class="archive-cat-chip">${c.icon} ${cat}: ${fmt(total)}</span>`;
+    }).join('');
+    return `<div class="archive-card">
+      <div class="archive-header">
+        <div>
+          <div class="archive-month-name">${a.monthName}</div>
+          <div class="archive-meta">Closed ${fmtDate(a.closedAt.split('T')[0])} · ${a.entryCount} entries · ${a.restaurantName}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="archive-total">${fmt(a.total)}</div>
+          <span class="archive-badge">CLOSED</span>
+        </div>
+      </div>
+      <div class="archive-cats">${chips}</div>
+      <div class="archive-actions">
+        <button class="arch-btn" onclick='printReport(${JSON.stringify(a).replace(/'/g,"&#39;")})'>🖨 Print / PDF</button>
+        <button class="arch-btn" onclick="exportArchCSV('${a.id}')">📊 CSV</button>
+        <button class="arch-btn danger" onclick="deleteArchive('${a.id}')">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteArchive(id) { _deleteArchive(id); }
+async function _deleteArchive(id) {
+  const a=archive.find(x=>x.id===id);
+  if(!confirm('Delete this archived month? This also unlocks its entries.')) return;
+  showLoading(true);
+  try {
+    await sbDelete('tp_archive', id);
+    if(a){ await fetch(`${SB_URL}/rest/v1/tp_locked?month_key=eq.${a.monthKey}`,{method:'DELETE',headers:SB_HEADERS}); lockedMonths=lockedMonths.filter(k=>k!==a.monthKey); }
+    archive=archive.filter(x=>x.id!==id);
+    refreshAll(); toast('Archive deleted');
+  } catch(e){ toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+function exportArchCSV(id) {
+  const a=archive.find(x=>x.id===id); if(!a) return;
+  const rows=a.entries.map(e=>[e.date,`"${e.supplier}"`,`"${e.category}"`,e.amount.toFixed(2),`"${e.ref||''}"`,`"${e.notes||''}"`].join(','));
+  download(`${a.monthKey.replace('/','-')}_expenses.csv`,'Date,Supplier,Category,Amount,Ref,Notes\n'+rows.join('\n'),'text/csv');
+  toast('✓ CSV exported');
+}
+
+// ─── PDF PRINT REPORT ─────────────────────────────
+function printReport(a) {
+  if(!a) return;
+  const catRows=Object.entries(a.byCategory).sort((x,y)=>y[1]-x[1]).map(([cat,total])=>{
+    const c=CAT[cat]||CAT['Other'], count=a.entries.filter(e=>e.category===cat).length, pct=a.total>0?Math.round(total/a.total*100):0;
+    return `<tr><td>${c.icon} ${cat}</td><td class="num">${fmt(total)}</td><td class="num">${count}</td><td class="num">${pct}%</td></tr>`;
+  }).join('');
+
+  const supData = a.bySupplierData || bySupplier(a.entries);
+  const supRows=Object.entries(supData).sort((x,y)=>y[1].total-x[1].total).map(([s,i])=>
+    `<tr><td>${s}</td><td class="num">${i.count}</td><td class="num">${fmt(i.total)}</td></tr>`
+  ).join('');
+
+  const entryRows=[...a.entries].sort((x,y)=>new Date(x.date)-new Date(y.date)).map(e=>
+    `<tr><td>${fmtDate(e.date)}</td><td>${e.supplier}</td><td>${e.category}</td><td class="num">${fmt(e.amount)}</td><td>${e.ref||''}</td></tr>`
+  ).join('');
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>${a.restaurantName} — ${a.monthName}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@400;500&family=DM+Mono&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;color:#1A1610;background:white;padding:36px;font-size:12px}
+  .hdr{border-bottom:3px solid #1A1610;padding-bottom:18px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-end}
+  h1{font-family:'Playfair Display',serif;font-size:28px}
+  .sub{color:#8C8070;font-size:11px;margin-top:4px}
+  .badge{background:#1A1610;color:#C9A84C;padding:4px 12px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.06em}
+  .meta{color:#8C8070;font-size:10px;margin-top:5px;text-align:right}
+  .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+  .kpi-box{border:1px solid #EDE8DF;border-radius:8px;padding:14px;text-align:center}
+  .kpi-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
+  .kpi-lbl{font-size:9px;color:#8C8070;text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+  h2{font-family:'Playfair Display',serif;font-size:15px;margin:20px 0 8px;border-bottom:1px solid #EDE8DF;padding-bottom:6px}
+  table{width:100%;border-collapse:collapse;margin-bottom:6px;font-size:11px}
+  th{background:#1A1610;color:#F5F0E8;padding:7px 10px;text-align:left;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+  td{padding:8px 10px;border-bottom:1px solid #EDE8DF}
+  tr:last-child td{border-bottom:none}
+  tr:nth-child(even) td{background:#FAF7F2}
+  .foot td{background:#1A1610!important;color:#F5F0E8;font-weight:600;font-family:'DM Mono',monospace;font-size:12px}
+  .num{text-align:right;font-family:'DM Mono',monospace}
+  .footer{margin-top:28px;font-size:9px;color:#8C8070;border-top:1px solid #EDE8DF;padding-top:10px}
+  @media print{@page{margin:1.5cm}}
+</style></head><body>
+<div class="hdr">
+  <div><h1>${a.restaurantName}</h1><div class="sub">Monthly Expense Report &bull; ${a.monthName}</div></div>
+  <div style="text-align:right"><span class="badge">CLOSED &amp; LOCKED</span><div class="meta">Generated ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}<br>Closed ${fmtDate(a.closedAt.split('T')[0])}</div></div>
+</div>
+<div class="kpi">
+  <div class="kpi-box"><div class="kpi-val">${fmt(a.total)}</div><div class="kpi-lbl">Total Expenses</div></div>
+  <div class="kpi-box"><div class="kpi-val">${a.entryCount}</div><div class="kpi-lbl">Invoices / Entries</div></div>
+  <div class="kpi-box"><div class="kpi-val">${Object.keys(a.byCategory).length}</div><div class="kpi-lbl">Categories</div></div>
+</div>
+<h2>Breakdown by Category</h2>
+<table><thead><tr><th>Category</th><th style="text-align:right">Total</th><th style="text-align:right">Entries</th><th style="text-align:right">%</th></tr></thead>
+<tbody>${catRows}</tbody>
+<tfoot><tr class="foot"><td>Grand Total</td><td class="num">${fmt(a.total)}</td><td class="num">${a.entryCount}</td><td class="num">100%</td></tr></tfoot></table>
+<h2>Breakdown by Supplier</h2>
+<table><thead><tr><th>Supplier</th><th style="text-align:right">Invoices</th><th style="text-align:right">Total</th></tr></thead>
+<tbody>${supRows}</tbody></table>
+<h2>All Entries</h2>
+<table><thead><tr><th>Date</th><th>Supplier</th><th>Category</th><th style="text-align:right">Amount</th><th>Ref #</th></tr></thead>
+<tbody>${entryRows}</tbody>
+<tfoot><tr class="foot"><td colspan="3">Total</td><td class="num">${fmt(a.total)}</td><td></td></tr></tfoot></table>
+<div class="footer">${a.restaurantName} &bull; ${a.monthName} &bull; Prepared with Mise en Place</div>
+<script>window.onload=()=>window.print();<\/script>
+</body></html>`;
+
+  const w=window.open('','_blank','width=900,height=700');
+  w.document.write(html); w.document.close();
+}
+
+// ─── EXPORT ───────────────────────────────────────
+function exportCSV() {
+  const rows=entries.map(e=>[e.date,`"${e.supplier}"`,`"${e.category}"`,e.amount.toFixed(2),`"${e.ref||''}"`,`"${e.notes||''}"`,e.source].join(','));
+  download('restaurant_expenses.csv','Date,Supplier,Category,Amount,Ref,Notes,Source\n'+rows.join('\n'),'text/csv');
+  toast('✓ CSV exported');
+}
+function exportJSON() { download('restaurant_expenses.json',JSON.stringify(entries,null,2),'application/json'); toast('✓ JSON exported'); }
+function download(name,content,type) { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name; a.click(); }
+
+// ─── DELETE & EDIT ────────────────────────────────
+async function deleteEntry(id) {
+  const e=entries.find(x=>x.id===id);
+  if(!e) return;
+  if(lockedMonths.includes(keyFromStr(e.date))){ toast('🔒 Month is locked — cannot delete'); return; }
+  if(!confirm(`Delete "${e.supplier}" — ${fmt(e.amount)}?\nThis cannot be undone.`)) return;
+  showLoading(true);
+  try {
+    await sbDelete('tp_entries', id);
+    entries=entries.filter(x=>x.id!==id);
+    toast('🗑 Entry deleted'); refreshAll();
+  } catch(err){ toast('Error: '+err.message); }
+  showLoading(false);
+}
+
+function openEdit(id, readOnly) {
+  const e=entries.find(x=>x.id===id); if(!e) return;
+  // close swipe panel first
+  if(openActionId){ const el=document.getElementById('ea-'+openActionId); if(el) el.classList.remove('visible'); openActionId=null; }
+  document.getElementById('edit-id').value=id;
+  document.getElementById('edit-amount').value=e.amount;
+  document.getElementById('edit-amount').disabled=readOnly;
+  document.getElementById('edit-date').value=e.date;
+  document.getElementById('edit-date').disabled=readOnly;
+  document.getElementById('edit-supplier').value=e.supplier||'';
+  document.getElementById('edit-supplier').disabled=readOnly;
+  document.getElementById('edit-category').value=e.category||'Other';
+  document.getElementById('edit-category').disabled=readOnly;
+  document.getElementById('edit-ref').value=e.ref||'';
+  document.getElementById('edit-ref').disabled=readOnly;
+  document.getElementById('edit-notes').value=e.notes||'';
+  document.getElementById('edit-notes').disabled=readOnly;
+  // show/hide action buttons
+  document.querySelector('#editModal .btn-primary').style.display=readOnly?'none':'block';
+  document.querySelector('#editModal .btn-secondary').style.display=readOnly?'none':'block';
+  document.getElementById('editModal').querySelector('[onclick="deleteFromModal()"]').style.display=readOnly?'none':'block';
+  if(readOnly){ document.querySelector('#editModal .modal-sub').textContent='This month is locked — view only'; }
+  else { document.querySelector('#editModal .modal-sub').textContent='Make corrections then save'; }
+  document.getElementById('editModal').style.display='block';
+}
+
+function closeEditModal() { document.getElementById('editModal').style.display='none'; }
+
+async function saveEdit() {
+  const id=document.getElementById('edit-id').value;
+  const idx=entries.findIndex(x=>x.id===id); if(idx<0) return;
+  const dv=document.getElementById('edit-date').value;
+  if(lockedMonths.includes(keyFromStr(dv))){ toast('🔒 Month is locked'); return; }
+  const amt=parseFloat(document.getElementById('edit-amount').value);
+  if(!amt||amt<=0){ toast('Enter a valid amount'); return; }
+  const updated={...entries[idx], amount:amt, date:dv||today(),
+    supplier:document.getElementById('edit-supplier').value||'Unknown',
+    category:document.getElementById('edit-category').value||'Other',
+    ref:document.getElementById('edit-ref').value,
+    notes:document.getElementById('edit-notes').value };
+  showLoading(true);
+  try {
+    await sbUpdate('tp_entries', id, {date:updated.date,supplier:updated.supplier,category:updated.category,amount:updated.amount,ref:updated.ref,notes:updated.notes});
+    entries[idx]=updated;
+    closeEditModal(); toast('✓ Entry updated'); refreshAll();
+  } catch(e){ toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+function deleteFromModal() {
+  const id=document.getElementById('edit-id').value;
+  closeEditModal();
+  deleteEntry(id);
+}
+
+// ─── HELPERS ──────────────────────────────────────
+function byCat(arr)      { return arr.reduce((acc,e)=>{acc[e.category]=(acc[e.category]||0)+e.amount;return acc;},{}); }
+function bySupplier(arr) { return arr.reduce((acc,e)=>{if(!acc[e.supplier])acc[e.supplier]={total:0,count:0};acc[e.supplier].total+=e.amount;acc[e.supplier].count++;return acc;},{}); }
+function sum(arr)        { return arr.reduce((s,e)=>s+e.amount,0); }
+function fmt(n)          { return '$'+n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function fmtDate(d)      { return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function mkKey(d)        { return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}`; }
+function keyFromStr(s)   { const d=new Date(s+'T00:00:00'); return mkKey(d); }
+function toast(msg)      { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2800); }
+
+// ─── INGREDIENTS LIBRARY ──────────────────────────
+let ingredients = [];
+let ingModalAliases = [];
+let mapRawNameValue = '';
+const ICAT_ICONS = {
+  'Protein':'🥩','Produce':'🥬','Dairy':'🧀','Bakery':'🍞',
+  'Condiment':'🌶','Dry Goods':'🌾','Beverages':'🥤','Other':'📦'
+};
+
+function saveIngLib() { /* Supabase handles persistence */ }
+
+async function loadIngredients() {
+  try {
+    const raw = await sbSelect('tp_ingredients');
+    ingredients = raw.map(r => ({
+      id: r.id, name: r.name, category: r.category||'Other',
+      unit: r.unit||'unit', notes: r.notes||'',
+      aliases: r.aliases||[], lastPrice: r.last_price||0,
+      lastPriceDate: r.last_price_date||null, prevPrice: r.prev_price||0,
+    }));
+  } catch(e) { ingredients = []; }
+}
+
+function refreshIngredients() {
+  updateIngStats();
+  renderIngredients();
+  renderUnmatchedBanner();
+  updateRecipeIngPicker(); // keep recipe picker in sync
+}
+
+function updateIngStats() {
+  document.getElementById('istat-total').textContent = ingredients.length;
+  document.getElementById('istat-aliases').textContent = ingredients.reduce((s,i)=>s+(i.aliases||[]).length,0);
+  // count how many are used in recipes
+  const used = new Set(recipes.flatMap(r=>r.ingredients.map(i=>i.name)));
+  document.getElementById('istat-recipes').textContent = ingredients.filter(i=>used.has(i.name)).length;
+}
+
+function renderIngredients() {
+  const q = (document.getElementById('ingSearch')?.value||'').toLowerCase();
+  let list = ingredients;
+  if (q) list = list.filter(i =>
+    i.name.toLowerCase().includes(q) ||
+    (i.aliases||[]).some(a=>a.toLowerCase().includes(q)) ||
+    (i.category||'').toLowerCase().includes(q));
+
+  const el = document.getElementById('ingredient-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">No ingredients yet.<br>Tap <strong>+ New</strong> to add your first ingredient.</div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(ing => {
+    const icon = ICAT_ICONS[ing.category]||'📦';
+    const badgeClass = 'ibadge-'+(ing.category||'Other');
+    const trend = ing.lastPrice>ing.prevPrice?'↑ Up':ing.lastPrice<ing.prevPrice?'↓ Down':'→ Same';
+    const trendClass = ing.lastPrice>ing.prevPrice?'trend-up':ing.lastPrice<ing.prevPrice?'trend-down':'trend-flat';
+    const pct = ing.prevPrice ? Math.abs(Math.round((ing.lastPrice-ing.prevPrice)/ing.prevPrice*100)) : 0;
+    // find linked recipes
+    const linked = recipes.filter(r=>r.ingredients.some(i=>i.name===ing.name)).map(r=>r.name);
+    return `<div class="ing-lib-card" onclick="openIngModal('${ing.id}')">
+      <div class="ing-lib-header">
+        <div>
+          <div class="ing-lib-name">${icon} ${ing.name}</div>
+          <div class="ing-lib-meta">per ${ing.unit} · ${(ing.aliases||[]).length} alias${(ing.aliases||[]).length!==1?'es':''}</div>
+        </div>
+        <span class="ing-cat-badge ${badgeClass}">${ing.category}</span>
+      </div>
+      ${(ing.aliases||[]).length?`<div class="ing-alias-chips">${ing.aliases.map(a=>`<span class="ing-alias-chip">${a}</span>`).join('')}</div>`:''}
+      ${ing.lastPrice?`<div class="ing-price-row">
+        <div><div class="ing-price-val">$${ing.lastPrice.toFixed(2)}</div><div class="ing-price-lbl">Last price · ${ing.lastPriceDate||'—'}</div></div>
+        <span class="ing-trend ${trendClass}">${trend}${pct?' '+pct+'%':''}</span>
+      </div>`:''}
+      ${linked.length?`<div class="ing-recipe-links">${linked.map(r=>`<span class="ing-recipe-link">🍔 ${r}</span>`).join('')}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── UNMATCHED BANNER ──
+function renderUnmatchedBanner() {
+  const banner = document.getElementById('unmatchedBanner');
+  if (!banner) return;
+  // find line items from entries that don't match any ingredient
+  const allItems = entries.flatMap(e=>(e.items||[]).map(i=>i.name)).filter(Boolean);
+  const masterNames = ingredients.map(i=>i.name.toLowerCase());
+  const allAliases  = ingredients.flatMap(i=>(i.aliases||[]).map(a=>a.toLowerCase()));
+  const unmatched = [...new Set(allItems.filter(n =>
+    !masterNames.includes(n.toLowerCase()) && !allAliases.includes(n.toLowerCase())
+  ))].slice(0,5);
+
+  if (!unmatched.length) { banner.style.display='none'; return; }
+  banner.style.display='block';
+  banner.innerHTML = `<div class="unmatched-banner">
+    <div class="unmatched-banner-title">⚠️ ${unmatched.length} invoice item${unmatched.length!==1?'s':''} not yet mapped</div>
+    ${unmatched.map(name=>`<div class="unmatched-item">
+      <span class="unmatched-raw">${name}</span>
+      <button class="btn-map-it" onclick="openMapModal('${name.replace(/'/,"\\'")}'">Map →</button>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ── MODAL OPEN/CLOSE ──
+function openIngModal(id) {
+  const ing = id ? ingredients.find(x=>x.id===id) : null;
+  document.getElementById('ingModalTitle').textContent = ing ? 'Edit Ingredient' : 'New Ingredient';
+  document.getElementById('ing-id').value = ing ? ing.id : '';
+  document.getElementById('ing-name').value = ing ? ing.name : '';
+  document.getElementById('ing-cat').value  = ing ? (ing.category||'Other') : 'Protein';
+  document.getElementById('ing-unit').value = ing ? (ing.unit||'lb') : 'lb';
+  document.getElementById('ing-notes').value= ing ? (ing.notes||'') : '';
+  document.getElementById('ing-delete-btn').style.display = ing ? 'block' : 'none';
+  ingModalAliases = ing ? [...(ing.aliases||[])] : [];
+  renderIngAliases();
+  document.getElementById('ingModal').style.display = 'block';
+}
+function closeIngModal() { document.getElementById('ingModal').style.display='none'; }
+
+function renderIngAliases() {
+  document.getElementById('ing-alias-list').innerHTML = ingModalAliases.map((a,i)=>
+    `<div class="ing-alias-tag">${a}<button onclick="removeIngAlias(${i})">×</button></div>`
+  ).join('');
+}
+function removeIngAlias(i) { ingModalAliases.splice(i,1); renderIngAliases(); }
+function addIngAlias() {
+  const v = document.getElementById('ing-alias-input').value.trim();
+  if (!v) return;
+  if (!ingModalAliases.includes(v)) ingModalAliases.push(v);
+  document.getElementById('ing-alias-input').value = '';
+  renderIngAliases();
+}
+
+// ── SAVE / DELETE ──
+function saveIngredient() { _saveIngredient(); }
+async function _saveIngredient() {
+  const name = document.getElementById('ing-name').value.trim();
+  if (!name) { toast('Enter an ingredient name'); return; }
+  const existingId = document.getElementById('ing-id').value;
+  const ing = {
+    id: existingId||uid(), name,
+    category: document.getElementById('ing-cat').value,
+    unit: document.getElementById('ing-unit').value,
+    notes: document.getElementById('ing-notes').value.trim(),
+    aliases: [...ingModalAliases],
+    lastPrice: existingId?(ingredients.find(x=>x.id===existingId)?.lastPrice||0):0,
+    lastPriceDate: existingId?(ingredients.find(x=>x.id===existingId)?.lastPriceDate||null):null,
+    prevPrice: existingId?(ingredients.find(x=>x.id===existingId)?.prevPrice||0):0,
+  };
+  showLoading(true);
+  try {
+    await sbUpsert('tp_ingredients',{
+      id:ing.id, name:ing.name, category:ing.category, unit:ing.unit,
+      notes:ing.notes, aliases:ing.aliases,
+      last_price:ing.lastPrice, last_price_date:ing.lastPriceDate, prev_price:ing.prevPrice
+    });
+    if (existingId) { const idx=ingredients.findIndex(x=>x.id===existingId); if(idx>=0)ingredients[idx]=ing; else ingredients.unshift(ing); }
+    else ingredients.unshift(ing);
+    closeIngModal(); refreshIngredients(); toast('✓ Ingredient saved!');
+  } catch(e) { toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+function deleteIngredient() { _deleteIngredient(); }
+async function _deleteIngredient() {
+  const id = document.getElementById('ing-id').value;
+  const ing = ingredients.find(x=>x.id===id);
+  if (!confirm(`Delete "${ing?.name}"?`)) return;
+  showLoading(true);
+  try {
+    await sbDelete('tp_ingredients', id);
+    ingredients = ingredients.filter(x=>x.id!==id);
+    closeIngModal(); refreshIngredients(); toast('🗑 Ingredient deleted');
+  } catch(e) { toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+// ── MAP MODAL ──
+function openMapModal(rawName) {
+  mapRawNameValue = rawName;
+  document.getElementById('mapRawName').textContent = rawName;
+  // populate select
+  document.getElementById('mapSelect').innerHTML =
+    '<option value="">Select master ingredient…</option>' +
+    ingredients.map(i=>`<option value="${i.id}">${i.name}</option>`).join('');
+  document.getElementById('mapModal').style.display='block';
+}
+function closeMapModal() { document.getElementById('mapModal').style.display='none'; }
+
+function confirmMap() { _confirmMap(); }
+async function _confirmMap() {
+  const id = document.getElementById('mapSelect').value;
+  if (!id) { toast('Select an ingredient'); return; }
+  const ing = ingredients.find(x=>x.id===id);
+  if (!ing) return;
+  if (!ing.aliases.includes(mapRawNameValue)) ing.aliases.push(mapRawNameValue);
+  showLoading(true);
+  try {
+    await sbUpdate('tp_ingredients', id, {aliases: ing.aliases});
+    closeMapModal(); refreshIngredients(); toast(`✓ Mapped to "${ing.name}"`);
+  } catch(e) { toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+function createFromMap() {
+  closeMapModal();
+  openIngModal();
+  ingModalAliases = [mapRawNameValue];
+  renderIngAliases();
+}
+
+// ── AI MATCHING: called after invoice scan ──
+function matchLineItemsToIngredients(items) {
+  if (!items || !items.length || !ingredients.length) return;
+  const unmatched = [];
+  items.forEach(item => {
+    const nameLower = item.name.toLowerCase();
+    // check master names
+    const byName = ingredients.find(i=>i.name.toLowerCase()===nameLower);
+    if (byName) { item._masterName=byName.name; return; }
+    // check aliases
+    const byAlias = ingredients.find(i=>(i.aliases||[]).some(a=>a.toLowerCase()===nameLower));
+    if (byAlias) { item._masterName=byAlias.name; return; }
+    // fuzzy: check if any master name is contained in item name or vice versa
+    const fuzzy = ingredients.find(i=>
+      nameLower.includes(i.name.toLowerCase()) || i.name.toLowerCase().includes(nameLower) ||
+      (i.aliases||[]).some(a=>nameLower.includes(a.toLowerCase())||a.toLowerCase().includes(nameLower))
+    );
+    if (fuzzy) { item._masterName=fuzzy.name; item._fuzzy=true; return; }
+    unmatched.push(item.name);
+  });
+  return unmatched;
+}
+
+// ── WIRE INTO RECIPE INGREDIENT PICKER ──
+function updateRecipeIngPicker() {
+  // Called when opening recipe modal — populates ingredient datalist
+  let dl = document.getElementById('ing-datalist');
+  if (!dl) {
+    dl = document.createElement('datalist');
+    dl.id = 'ing-datalist';
+    document.body.appendChild(dl);
+  }
+  dl.innerHTML = ingredients.map(i=>`<option value="${i.name}">${i.name} (${i.category})</option>`).join('');
+}
+
+// ── UPDATE addIngredientRow to use datalist ──
+const _origAddIngredientRow = addIngredientRow;
+function addIngredientRow(data) {
+  _origAddIngredientRow(data);
+  // attach datalist to the last name input added
+  const rows = document.querySelectorAll('#ing-rows .ing-row');
+  const last = rows[rows.length-1];
+  if (last) {
+    const nameInput = last.querySelector('.ing-name');
+    if (nameInput) nameInput.setAttribute('list','ing-datalist');
+  }
+}
+
+// ── UPDATE INGREDIENT PRICE WHEN INVOICE SAVED ──
+async function updateIngredientPrices(items, invoiceDate) {
+  if (!items||!items.length) return;
+  for (const item of items) {
+    if (!item._masterName||!item.price||!item.qty) continue;
+    const ing = ingredients.find(i=>i.name===item._masterName);
+    if (!ing) continue;
+    const unitPrice = item.unit_price || (item.price/(item.qty||1));
+    if (!unitPrice) continue;
+    const prev = ing.lastPrice||0;
+    ing.prevPrice = prev;
+    ing.lastPrice = Math.round(unitPrice*100)/100;
+    ing.lastPriceDate = invoiceDate;
+    try {
+      await sbUpdate('tp_ingredients', ing.id, {
+        last_price: ing.lastPrice, prev_price: ing.prevPrice, last_price_date: invoiceDate
+      });
+    } catch(e) { console.warn('Price update failed:', e.message); }
+  }
+}
+let recipes = JSON.parse(localStorage.getItem('mep_recipes') || '[]');
+let recipeActiveCat = 'All';
+
+const RCATS = {
+  'Burgers':    {icon:'🍔', color:'#FFEAEA'},
+  'Sandwiches': {icon:'🥪', color:'#FFF0E0'},
+  'Tacos':      {icon:'🌮', color:'#FFFDE0'},
+  'Sides':      {icon:'🍟', color:'#FFF0E0'},
+  'Drinks':     {icon:'🥤', color:'#E8F4FD'},
+  'Desserts':   {icon:'🍨', color:'#F3E8FD'},
+  'Other':      {icon:'📦', color:'#F0F0F0'},
+};
+
+const UNITS = ['g','kg','ml','L','oz','lb','unit','tbsp','tsp','cup','slice','piece'];
+
+function saveRecipes() { localStorage.setItem('mep_recipes', JSON.stringify(recipes)); }
+
+function refreshRecipes() {
+  // build category filter chips
+  const allCats = ['All', ...Object.keys(RCATS)];
+  document.getElementById('recipeCatFilter').innerHTML = allCats.map(c =>
+    `<div class="filter-chip ${c===recipeActiveCat?'active':''}" onclick="setRecipeCat('${c}')">${c==='All'?'All':(RCATS[c].icon+' '+c)}</div>`
+  ).join('');
+  renderRecipes();
+}
+
+function setRecipeCat(cat) { recipeActiveCat = cat; refreshRecipes(); }
+
+function renderRecipes() {
+  const q = (document.getElementById('recipeSearch')?.value||'').toLowerCase();
+  let list = recipes;
+  if (recipeActiveCat !== 'All') list = list.filter(r => r.category === recipeActiveCat);
+  if (q) list = list.filter(r => r.name.toLowerCase().includes(q) ||
+    r.ingredients.some(i => i.name.toLowerCase().includes(q)));
+
+  const el = document.getElementById('recipe-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🍽</div><div class="empty-text">No products yet.<br>Tap <strong>+ New</strong> to add your first menu item.</div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(r => {
+    const rc = RCATS[r.category] || RCATS['Other'];
+    const ingChips = r.ingredients.slice(0,5).map(i =>
+      `<span class="ing-chip">${i.name}${i.qty?' · '+i.qty+(i.unit?' '+i.unit:''):''}</span>`
+    ).join('') + (r.ingredients.length > 5 ? `<span class="ing-chip">+${r.ingredients.length-5} more</span>` : '');
+    return `<div class="recipe-card" onclick="openRecipeDetail('${r.id}')">
+      <div class="recipe-card-header">
+        <div>
+          <div class="recipe-name">${rc.icon} ${r.name}</div>
+          <div class="recipe-meta">${r.ingredients.length} ingredient${r.ingredients.length!==1?'s':''} · Yield: ${r.yield||1} portion${(r.yield||1)!==1?'s':''}</div>
+          ${r.notes?`<div class="recipe-meta" style="margin-top:2px;font-style:italic">${r.notes}</div>`:''}
+        </div>
+        <span class="recipe-cat-badge">${r.category}</span>
+      </div>
+      <div class="recipe-ing-preview">${ingChips}</div>
+      <div class="recipe-card-actions" onclick="event.stopPropagation()">
+        <button class="recipe-action-btn" onclick="openRecipeModal('${r.id}')">✏️ Edit</button>
+        <button class="recipe-action-btn danger" onclick="deleteRecipeById('${r.id}')">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MODAL OPEN/CLOSE ──
+function openRecipeModal(id) {
+  const r = id ? recipes.find(x => x.id === id) : null;
+  document.getElementById('recipeModalTitle').textContent = r ? 'Edit Product' : 'New Product';
+  document.getElementById('r-id').value = r ? r.id : '';
+  document.getElementById('r-name').value = r ? r.name : '';
+  document.getElementById('r-cat').value = r ? r.category : 'Burgers';
+  document.getElementById('r-yield').value = r ? (r.yield||1) : 1;
+  document.getElementById('r-notes').value = r ? (r.notes||'') : '';
+  document.getElementById('r-delete-btn').style.display = r ? 'block' : 'none';
+
+  // clear and populate ingredient rows
+  document.getElementById('ing-rows').innerHTML = '';
+  if (r && r.ingredients.length) {
+    r.ingredients.forEach(i => addIngredientRow(i));
+  } else {
+    addIngredientRow(); // start with one blank row
+  }
+  updateIngTotal();
+  document.getElementById('recipeModal').style.display = 'block';
+}
+
+function closeRecipeModal() { document.getElementById('recipeModal').style.display = 'none'; }
+
+// ── INGREDIENT ROWS ──
+function addIngredientRow(data) {
+  const rowId = uid();
+  const unitOptions = UNITS.map(u => `<option ${data&&data.unit===u?'selected':''}>${u}</option>`).join('');
+  const row = document.createElement('div');
+  row.className = 'ing-row';
+  row.id = 'ing-' + rowId;
+  row.innerHTML = `
+    <input type="text"   class="ing-name" placeholder="e.g. Beef patty" value="${data&&data.name?data.name:''}" oninput="updateIngTotal()">
+    <input type="number" class="ing-qty"  placeholder="0"  step="any" min="0" value="${data&&data.qty?data.qty:''}" oninput="updateIngTotal()">
+    <select class="ing-unit">${unitOptions}</select>
+    <input type="text"   class="ing-notes" placeholder="optional" value="${data&&data.notes?data.notes:''}">
+    <button class="ing-del-btn" onclick="removeIngRow('ing-${rowId}')">×</button>`;
+  document.getElementById('ing-rows').appendChild(row);
+}
+
+function removeIngRow(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+  updateIngTotal();
+}
+
+function updateIngTotal() {
+  const rows = document.querySelectorAll('#ing-rows .ing-row');
+  const totalBar = document.getElementById('ing-total-bar');
+  const counts = { g:0, kg:0, ml:0, L:0, oz:0, lb:0 };
+  let anyQty = false;
+  rows.forEach(r => {
+    const qty = parseFloat(r.querySelector('.ing-qty')?.value) || 0;
+    const unit = r.querySelector('.ing-unit')?.value || '';
+    if (qty > 0) { anyQty = true; if (counts[unit] !== undefined) counts[unit] += qty; }
+  });
+  if (!anyQty) { totalBar.classList.remove('show'); return; }
+  const parts = Object.entries(counts).filter(([,v])=>v>0).map(([u,v])=>`<strong>${v}${u}</strong>`).join(' · ');
+  totalBar.innerHTML = `📦 Total weight/volume: ${parts||'—'}`;
+  totalBar.classList.add('show');
+}
+
+function saveRecipe() { _saveRecipe(); }
+async function _saveRecipe() {
+  const name = document.getElementById('r-name').value.trim();
+  if (!name) { toast('Enter a product name'); return; }
+  const rows = document.querySelectorAll('#ing-rows .ing-row');
+  const ingredients = [];
+  rows.forEach(r => {
+    const n = r.querySelector('.ing-name').value.trim();
+    if (!n) return;
+    ingredients.push({ name:n, qty:parseFloat(r.querySelector('.ing-qty').value)||0, unit:r.querySelector('.ing-unit').value, notes:r.querySelector('.ing-notes').value.trim() });
+  });
+  const existingId = document.getElementById('r-id').value;
+  const recipe = {
+    id: existingId || uid(), name,
+    category: document.getElementById('r-cat').value,
+    yield: parseInt(document.getElementById('r-yield').value)||1,
+    notes: document.getElementById('r-notes').value.trim(),
+    ingredients,
+    createdAt: existingId ? (recipes.find(x=>x.id===existingId)?.createdAt||new Date().toISOString()) : new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  showLoading(true);
+  try {
+    await sbUpsert('tp_recipes',{id:recipe.id,name:recipe.name,category:recipe.category,yield:recipe.yield,notes:recipe.notes,ingredients:recipe.ingredients,created_at:recipe.createdAt,updated_at:recipe.updatedAt});
+    if (existingId) { const idx=recipes.findIndex(x=>x.id===existingId); if(idx>=0) recipes[idx]=recipe; else recipes.unshift(recipe); }
+    else { recipes.unshift(recipe); }
+    closeRecipeModal(); refreshRecipes(); toast('✓ Product saved!');
+  } catch(e){ toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+function deleteRecipe() { deleteRecipeById(document.getElementById('r-id').value, true); }
+function deleteRecipeById(id, fromModal) { _deleteRecipeById(id, fromModal); }
+async function _deleteRecipeById(id, fromModal) {
+  const r=recipes.find(x=>x.id===id); if(!r) return;
+  if(!confirm(`Delete "${r.name}"? This cannot be undone.`)) return;
+  showLoading(true);
+  try {
+    await sbDelete('tp_recipes', id);
+    recipes=recipes.filter(x=>x.id!==id);
+    if(fromModal) closeRecipeModal();
+    refreshRecipes(); toast('🗑 Product deleted');
+  } catch(e){ toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+// ── DETAIL VIEW ──
+function openRecipeDetail(id) {
+  const r = recipes.find(x => x.id === id);
+  if (!r) return;
+  const rc = RCATS[r.category] || RCATS['Other'];
+  const ingRows = r.ingredients.map(i =>
+    `<tr><td>${i.name}</td><td>${i.qty||'—'}</td><td>${i.unit||'—'}</td><td style="color:var(--warm-gray)">${i.notes||'—'}</td></tr>`
+  ).join('') || '<tr><td colspan="4" style="color:var(--warm-gray);text-align:center">No ingredients added</td></tr>';
+
+  document.getElementById('recipeDetailContent').innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div style="font-size:28px;margin-bottom:4px">${rc.icon}</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:22px;font-weight:900">${r.name}</div>
+        <div style="font-size:12px;color:var(--warm-gray);font-weight:600;margin-top:2px">${r.category} · Yield: ${r.yield||1} portion${(r.yield||1)!==1?'s':''}</div>
+        ${r.notes?`<div style="font-size:12px;color:var(--warm-gray);margin-top:6px;font-style:italic">${r.notes}</div>`:''}
+      </div>
+      <button class="btn-new-recipe" style="flex-shrink:0" onclick="closeRecipeDetail();openRecipeModal('${r.id}')">✏️ Edit</button>
+    </div>
+    <table class="detail-ing-table">
+      <thead><tr><th>Ingredient</th><th>Qty</th><th>Unit</th><th>Notes</th></tr></thead>
+      <tbody>${ingRows}</tbody>
+    </table>
+    <div style="font-size:10px;color:var(--warm-gray);margin-top:14px;font-weight:600">
+      Created ${new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+      ${r.updatedAt&&r.updatedAt!==r.createdAt?' · Updated '+new Date(r.updatedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):''}
+    </div>`;
+  document.getElementById('recipeDetailModal').style.display = 'block';
+}
+
+function closeRecipeDetail() { document.getElementById('recipeDetailModal').style.display = 'none'; }
+
+init();
+
+// ── PWA: GENERATE APPLE TOUCH ICON ───────────────
+(function() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 180;
+  const ctx = c.getContext('2d');
+  // background
+  const r = 36;
+  ctx.beginPath();
+  ctx.moveTo(r,0); ctx.lineTo(180-r,0); ctx.quadraticCurveTo(180,0,180,r);
+  ctx.lineTo(180,180-r); ctx.quadraticCurveTo(180,180,180-r,180);
+  ctx.lineTo(r,180); ctx.quadraticCurveTo(0,180,0,180-r);
+  ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+  ctx.closePath();
+  ctx.fillStyle = '#E8281A';
+  ctx.fill();
+  // "tu pepito" text
+  ctx.fillStyle = 'white';
+  ctx.font = '900 28px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('tu', 90, 82);
+  ctx.font = '900 26px Arial, sans-serif';
+  ctx.fillText('pepito', 90, 114);
+  // underline
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(22, 130); ctx.lineTo(158, 130); ctx.stroke();
+  // set as apple touch icon
+  document.getElementById('appleTouchIcon').href = c.toDataURL('image/png');
+})();
+
+// ── PWA: INSTALL PROMPT BANNER ───────────────────
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  if (document.getElementById('installBanner')) return;
+  const b = document.createElement('div');
+  b.id = 'installBanner';
+  b.style.cssText = `
+    position:fixed; bottom:0; left:0; right:0; z-index:9000;
+    background:#1A0A00; color:white; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    box-shadow:0 -4px 24px rgba(0,0,0,0.3);
+    animation: slideUp2 0.4s cubic-bezier(.34,1.2,.64,1);
+  `;
+  b.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:44px;height:44px;background:#E8281A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🍔</div>
+      <div>
+        <div style="font-weight:800;font-size:14px">Install Tu Pepito</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:1px">Add to your home screen</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <button onclick="dismissInstall()" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:8px 14px;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer">Later</button>
+      <button onclick="installApp()" style="background:#E8281A;border:none;color:white;padding:8px 16px;border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer">Install</button>
+    </div>`;
+  document.body.appendChild(b);
+}
+
+async function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  dismissInstall();
+  if (outcome === 'accepted') toast('✓ App installed!');
+}
+
+function dismissInstall() {
+  const b = document.getElementById('installBanner');
+  if (b) { b.style.opacity='0'; b.style.transform='translateY(100%)'; b.style.transition='all .3s'; setTimeout(()=>b.remove(),300); }
+}
+
+// ── PWA: iOS INSTALL HINT ────────────────────────
+function showiOSHint() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone;
+  if (!isIOS || isStandalone) return;
+  // only show once
+  if (localStorage.getItem('tp_ios_hint')) return;
+  localStorage.setItem('tp_ios_hint','1');
+  setTimeout(()=>{
+    const b = document.createElement('div');
+    b.style.cssText = `
+      position:fixed;bottom:24px;left:16px;right:16px;z-index:9000;
+      background:#1A0A00;color:white;border-radius:16px;padding:16px 18px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.4);
+      animation:slideUp2 0.4s cubic-bezier(.34,1.2,.64,1);
+    `;
+    b.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="font-weight:800;font-size:14px">📱 Install on iPhone</div>
+        <button onclick="this.closest('div[style]').remove()" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;line-height:1">×</button>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5">
+        Tap <strong style="color:white">Share</strong> <span style="font-size:16px">⎙</span> at the bottom of Safari, then tap <strong style="color:white">"Add to Home Screen"</strong> to install Tu Pepito as an app.
+      </div>`;
+    document.body.appendChild(b);
+    setTimeout(()=>{ if(b.parentNode){ b.style.opacity='0'; b.style.transition='opacity .4s'; setTimeout(()=>b.remove(),400); }},8000);
+  }, 2000);
+}
+
+// ── PWA: SERVICE WORKER (inline) ─────────────────
+const swCode = `
+const CACHE = 'tupepito-v1';
+const ASSETS = ['/'];
+self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))); self.skipWaiting(); });
+self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))); self.clients.claim(); });
+self.addEventListener('fetch', e => {
+  if (e.request.url.includes('supabase.co')) return; // always network for DB
+  e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
+});`;
+
+if ('serviceWorker' in navigator) {
+  const blob = new Blob([swCode], {type:'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+
+showiOSHint();
+</script>
+</body>
+</html>
