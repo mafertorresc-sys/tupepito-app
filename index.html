@@ -2380,19 +2380,6 @@ function updateRecipeIngPicker() {
   dl.innerHTML = ingredients.map(i=>`<option value="${i.name}">${i.name} (${i.category})</option>`).join('');
 }
 
-// ── UPDATE addIngredientRow to use datalist ──
-const _origAddIngredientRow = addIngredientRow;
-function addIngredientRow(data) {
-  _origAddIngredientRow(data);
-  // attach datalist to the last name input added
-  const rows = document.querySelectorAll('#ing-rows .ing-row');
-  const last = rows[rows.length-1];
-  if (last) {
-    const nameInput = last.querySelector('.ing-name');
-    if (nameInput) nameInput.setAttribute('list','ing-datalist');
-  }
-}
-
 // ── UPDATE INGREDIENT PRICE WHEN INVOICE SAVED ──
 async function updateIngredientPrices(items, invoiceDate) {
   if (!items||!items.length) return;
@@ -2508,7 +2495,7 @@ function addIngredientRow(data) {
   row.className = 'ing-row';
   row.id = 'ing-' + rowId;
   row.innerHTML = `
-    <input type="text"   class="ing-name" placeholder="e.g. Beef patty" value="${data&&data.name?data.name:''}" oninput="updateIngTotal()">
+    <input type="text"   class="ing-name" placeholder="e.g. Beef patty" value="${data&&data.name?data.name:''}" oninput="updateIngTotal()" list="ing-datalist">
     <input type="number" class="ing-qty"  placeholder="0"  step="any" min="0" value="${data&&data.qty?data.qty:''}" oninput="updateIngTotal()">
     <select class="ing-unit">${unitOptions}</select>
     <input type="text"   class="ing-notes" placeholder="optional" value="${data&&data.notes?data.notes:''}">
@@ -3188,6 +3175,7 @@ function parseToastDining(text) {
   });
   return result;
 }
+function handleSalesCSV(ev) {
   const file = ev.target.files[0]; if(!file) return;
 
   // Handle ZIP file (Toast exports as ZIP)
@@ -3355,9 +3343,7 @@ function openSalesDayDetail(id) {
   alert(`${fmtDate(s.date)}\n\nTotal: ${fmt(s.total)}${s.covers?'\nCovers: '+s.covers:''}${s.notes?'\n'+s.notes:''}`);
 }
 
-// wire into refreshAll and showView
-const _origRefreshAll2 = refreshAll;
-function refreshAll() { _origRefreshAll2 && _origRefreshAll2(); refreshSales(); }
+// wire into showView handled above
 
 init();
 
