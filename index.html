@@ -214,7 +214,35 @@
   .empty-text { font-size: 14px; line-height: 1.6; font-weight: 600; }
   .section-divider { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); margin: 20px 0 10px; font-weight: 800; }
 
-  /* ── INGREDIENT LIBRARY ── */
+  /* ── LABOR ── */
+  .labor-day-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .labor-day-card:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(91,141,184,.12); }
+  .labor-day-icon { width: 38px; height: 38px; border-radius: 10px; background: #D6EAF8; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .labor-day-info { flex: 1; min-width: 0; }
+  .labor-day-date { font-weight: 800; font-size: 13px; }
+  .labor-day-meta { font-size: 11px; color: var(--warm-gray); font-weight: 600; margin-top: 2px; }
+  .labor-day-cost { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 700; color: #5B8DB8; flex-shrink: 0; }
+  .emp-row { display: grid; grid-template-columns: 1fr auto auto auto; padding: 10px 14px; border-bottom: 1px solid var(--border); gap: 8px; align-items: center; font-size: 12px; }
+  .emp-row:last-child { border-bottom: none; }
+  .emp-name { font-weight: 700; }
+  .emp-role { font-size: 10px; color: var(--warm-gray); font-weight: 600; margin-top: 2px; }
+  .emp-mono { font-family: 'DM Mono', monospace; font-size: 11px; text-align: right; }
+
+  /* ── SALES ── */
+  .sales-day-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .sales-day-card:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(26,106,58,.1); }
+  .sales-day-icon { width: 38px; height: 38px; border-radius: 10px; background: #D5F5E3; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .sales-day-info { flex: 1; min-width: 0; }
+  .sales-day-date { font-weight: 800; font-size: 13px; }
+  .sales-day-meta { font-size: 11px; color: var(--warm-gray); font-weight: 600; margin-top: 2px; }
+  .sales-day-rev { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+  .sales-top-item { background: white; border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow); }
+  .sales-top-item-name { font-weight: 800; font-size: 13px; }
+  .sales-top-item-meta { font-size: 11px; color: var(--warm-gray); font-weight: 600; margin-top: 2px; }
+  .sales-top-item-rev { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 700; color: var(--green); }
+  .cost-pct-good { color: var(--green); }
+  .cost-pct-warn { color: #E67E22; }
+  .cost-pct-bad  { color: var(--red); }
   .ing-lib-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; box-shadow: var(--shadow); cursor: pointer; transition: transform .15s, box-shadow .15s; }
   .ing-lib-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,40,26,0.12); }
   .ing-lib-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
@@ -418,6 +446,8 @@
   <div class="nav-tab" onclick="showView('archive',this)">🗄 Archive</div>
   <div class="nav-tab" onclick="showView('recipes',this)">🍔 Recipes</div>
   <div class="nav-tab" onclick="showView('ingredients',this)">📦 Ingredients</div>
+  <div class="nav-tab" onclick="showView('sales',this)">💰 Sales</div>
+  <div class="nav-tab" onclick="showView('labor',this)">👥 Labor</div>
 </nav>
 
 <main>
@@ -647,11 +677,219 @@
     <div id="ingredient-list"></div>
   </div>
 
+  <!-- SALES -->
+  <div class="view" id="view-sales">
+    <p class="section-title">Sales</p>
+    <p class="section-sub">Import daily sales from Toast and track revenue vs costs</p>
+
+    <!-- STATS ROW -->
+    <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:20px">
+      <div class="stat-card"><div class="stat-label">This Month Revenue</div><div class="stat-value" id="sales-month-rev" style="color:var(--green)">$0</div><div class="stat-sub" id="sales-month-sub">0 days recorded</div></div>
+      <div class="stat-card"><div class="stat-label">This Month Cost %</div><div class="stat-value" id="sales-cost-pct" style="font-size:22px">—</div><div class="stat-sub">food cost ratio</div></div>
+      <div class="stat-card"><div class="stat-label">Best Day</div><div class="stat-value" id="sales-best-day" style="font-size:18px">—</div><div class="stat-sub" id="sales-best-amt"></div></div>
+      <div class="stat-card"><div class="stat-label">Avg Daily Sales</div><div class="stat-value" id="sales-avg" style="font-size:22px">$0</div><div class="stat-sub">this month</div></div>
+    </div>
+
+    <!-- IMPORT SECTION -->
+    <div class="close-month-card" style="border-color:var(--green);box-shadow:0 4px 20px rgba(26,106,58,.1)">
+      <div class="close-month-title">📥 Import Toast Sales</div>
+      <div class="close-month-desc">
+        In Toast go to <strong>Reports → Sales Summary → select date → Export</strong>. You'll get a ZIP file with multiple CSVs. Unzip it and upload the files you want — or select all of them at once for the full breakdown.
+      </div>
+      <input type="file" id="salesCSVInput" accept=".csv,.txt" multiple onchange="handleSalesCSVMultiple(event)" style="display:none">
+      <input type="file" id="salesImgInput" accept="image/*" onchange="handleSalesImage(event)" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <button class="btn-close-month" style="background:var(--green)" onclick="document.getElementById('salesCSVInput').click()">
+          📊 Upload CSV
+        </button>
+        <button class="btn-close-month" style="background:var(--ink)" onclick="document.getElementById('salesImgInput').click()">
+          📷 Scan Report
+        </button>
+      </div>
+      <button class="btn-secondary" onclick="openManualSalesModal()">✏️ Enter Manually</button>
+    </div>
+
+    <!-- PERIOD TABS -->
+    <div class="period-tabs">
+      <div class="period-tab active" onclick="setSalesPeriod('week',this)">This Week</div>
+      <div class="period-tab" onclick="setSalesPeriod('month',this)">This Month</div>
+      <div class="period-tab" onclick="setSalesPeriod('quarter',this)">Quarter</div>
+      <div class="period-tab" onclick="setSalesPeriod('all',this)">All Time</div>
+    </div>
+
+    <!-- DAILY SALES LIST -->
+    <div class="section-divider">Daily Sales</div>
+    <div id="sales-daily-list"></div>
+
+    <!-- BY CATEGORY -->
+    <div class="section-divider" style="margin-top:20px">By Menu Category</div>
+    <div class="report-table" id="sales-cat-table">
+      <div class="report-table-header" style="grid-template-columns:1fr auto auto auto">
+        <div>Category</div><div style="text-align:right">Revenue</div><div style="text-align:right">Items</div><div style="text-align:right">%</div>
+      </div>
+      <div id="sales-cat-rows"></div>
+      <div class="report-total" style="grid-template-columns:1fr auto"><div>Total</div><div class="report-total-mono" id="sales-grand-total">$0.00</div></div>
+    </div>
+
+    <!-- TOP ITEMS -->
+    <div class="section-divider">Top Selling Items</div>
+    <div id="sales-top-items"></div>
+  </div>
+
+  <!-- LABOR -->
+  <div class="view" id="view-labor">
+    <p class="section-title">Labor</p>
+    <p class="section-sub">Track payroll costs and prime cost vs sales</p>
+
+    <!-- KPI STATS -->
+    <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:12px">
+      <div class="stat-card"><div class="stat-label">This Month Labor</div><div class="stat-value" id="labor-month-total" style="font-size:22px;color:#5B8DB8">$0</div><div class="stat-sub" id="labor-month-sub">0 days</div></div>
+      <div class="stat-card"><div class="stat-label">Labor Cost %</div><div class="stat-value" id="labor-cost-pct" style="font-size:22px">—</div><div class="stat-sub">vs net sales</div></div>
+      <div class="stat-card"><div class="stat-label">Prime Cost %</div><div class="stat-value" id="prime-cost-pct" style="font-size:22px">—</div><div class="stat-sub">food + labor ÷ sales</div></div>
+      <div class="stat-card"><div class="stat-label">Total Hours</div><div class="stat-value" id="labor-hours" style="font-size:22px">0</div><div class="stat-sub">this month</div></div>
+    </div>
+
+    <!-- PRIME COST GAUGE -->
+    <div id="primeCostGauge" style="background:white;border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow);display:none">
+      <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:10px">Prime Cost Health</div>
+      <div style="height:12px;background:#F0F0F0;border-radius:6px;overflow:hidden;margin-bottom:8px">
+        <div id="primeCostBar" style="height:100%;border-radius:6px;transition:width .6s ease;background:var(--green)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--warm-gray)">
+        <span>0%</span><span style="color:var(--green)">✓ Ideal ≤55%</span><span style="color:#E67E22">⚠️ 60%</span><span style="color:var(--red)">❌ 65%+</span>
+      </div>
+      <div id="primeCostMsg" style="margin-top:10px;font-size:12px;font-weight:700;padding:8px 12px;border-radius:8px"></div>
+    </div>
+
+    <!-- IMPORT -->
+    <div class="close-month-card" style="border-color:#5B8DB8;box-shadow:0 4px 20px rgba(91,141,184,.1)">
+      <div class="close-month-title">📥 Import Toast Payroll</div>
+      <div class="close-month-desc">
+        In Toast go to <strong>Reports → Labor → Export</strong>. Upload the <strong>payroll_export_YYYY_MM_DD.csv</strong> file directly.
+      </div>
+      <input type="file" id="laborCSVInput" accept=".csv" multiple onchange="handleLaborCSV(event)" style="display:none">
+      <button class="btn-close-month" style="background:#5B8DB8;margin-bottom:10px" onclick="document.getElementById('laborCSVInput').click()">
+        📊 Upload Payroll CSV
+      </button>
+      <button class="btn-secondary" onclick="openManualLaborModal()">✏️ Enter Manually</button>
+    </div>
+
+    <!-- PERIOD TABS -->
+    <div class="period-tabs">
+      <div class="period-tab active" onclick="setLaborPeriod('week',this)">This Week</div>
+      <div class="period-tab" onclick="setLaborPeriod('month',this)">This Month</div>
+      <div class="period-tab" onclick="setLaborPeriod('quarter',this)">Quarter</div>
+      <div class="period-tab" onclick="setLaborPeriod('all',this)">All Time</div>
+    </div>
+
+    <!-- BY ROLE -->
+    <div class="section-divider">Labor by Role</div>
+    <div class="report-table">
+      <div class="report-table-header" style="grid-template-columns:1fr auto auto auto">
+        <div>Role</div><div style="text-align:right">Hours</div><div style="text-align:right">Cost</div><div style="text-align:right">%</div>
+      </div>
+      <div id="labor-role-rows"></div>
+      <div class="report-total" style="grid-template-columns:1fr auto auto"><div>Total</div><div class="report-total-mono" id="labor-role-hours">0h</div><div class="report-total-mono" id="labor-role-total">$0.00</div></div>
+    </div>
+
+    <!-- DAILY LIST -->
+    <div class="section-divider">Daily Labor</div>
+    <div id="labor-daily-list"></div>
+  </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
 
-<!-- INGREDIENT MODAL -->
+<!-- MANUAL LABOR MODAL -->
+<div id="manualLaborModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeManualLaborModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeManualLaborModal()">✕</button>
+      <div class="modal-title">Daily Labor Entry</div>
+      <div class="modal-sub">Enter payroll costs for the day</div>
+      <div class="field"><label>Date</label><input type="date" id="ml-date"></div>
+      <div class="field"><label>Total Labor Cost ($)</label><input type="number" id="ml-total" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="field"><label>Total Hours Worked</label><input type="number" id="ml-hours" placeholder="0.0" step="0.1" min="0"></div>
+      <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray);margin:14px 0 10px">By Role (optional)</div>
+      <div id="ml-role-rows">
+        <div class="form-row" style="margin-bottom:8px">
+          <div class="field"><label>Role</label><input type="text" class="ml-role-name" placeholder="e.g. Cook"></div>
+          <div class="field"><label>Cost ($)</label><input type="number" class="ml-role-cost" placeholder="0.00" step="0.01"></div>
+        </div>
+      </div>
+      <button class="btn-secondary" onclick="addLaborRoleRow()" style="margin-bottom:14px">+ Add Role</button>
+      <div class="field"><label>Notes</label><input type="text" id="ml-notes" placeholder="Optional"></div>
+      <button class="btn-primary" onclick="saveManualLabor()">Save Labor Day</button>
+      <button class="btn-secondary" onclick="closeManualLaborModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- LABOR IMPORT PREVIEW MODAL -->
+<div id="laborImportModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeLaborImportModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeLaborImportModal()">✕</button>
+      <div class="modal-title">Review Payroll Import</div>
+      <div class="modal-sub">Extracted from Toast payroll export</div>
+      <div id="laborImportPreview"></div>
+      <button class="btn-primary" onclick="confirmLaborImport()">✓ Save Labor Data</button>
+      <button class="btn-secondary" onclick="closeLaborImportModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MANUAL SALES MODAL -->
+<div id="manualSalesModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeManualSalesModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeManualSalesModal()">✕</button>
+      <div class="modal-title">Daily Sales Entry</div>
+      <div class="modal-sub">Enter your sales totals for the day</div>
+
+      <div class="field"><label>Date</label><input type="date" id="ms-date"></div>
+      <div class="field"><label>Total Revenue ($)</label><input type="number" id="ms-total" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="field"><label>Number of Covers / Transactions</label><input type="number" id="ms-covers" placeholder="0" min="0"></div>
+
+      <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray);margin:14px 0 10px">Sales by Category (optional)</div>
+      <div id="ms-cat-rows">
+        <div class="form-row" style="margin-bottom:8px">
+          <div class="field"><label>Category</label><input type="text" class="ms-cat-name" placeholder="e.g. Burgers"></div>
+          <div class="field"><label>Amount ($)</label><input type="number" class="ms-cat-amt" placeholder="0.00" step="0.01"></div>
+        </div>
+      </div>
+      <button class="btn-secondary" onclick="addSalesCatRow()" style="margin-bottom:14px">+ Add Category</button>
+
+      <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warm-gray);margin-bottom:10px">Top Items (optional)</div>
+      <div id="ms-item-rows">
+        <div class="form-row" style="margin-bottom:8px">
+          <div class="field"><label>Item</label><input type="text" class="ms-item-name" placeholder="e.g. Classic Burger"></div>
+          <div class="field"><label>Qty sold</label><input type="number" class="ms-item-qty" placeholder="0" min="0"></div>
+        </div>
+      </div>
+      <button class="btn-secondary" onclick="addSalesItemRow()" style="margin-bottom:14px">+ Add Item</button>
+
+      <div class="field"><label>Notes</label><input type="text" id="ms-notes" placeholder="e.g. Friday night, busy shift"></div>
+      <button class="btn-primary" onclick="saveManualSales()">Save Sales Day</button>
+      <button class="btn-secondary" onclick="closeManualSalesModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SALES IMPORT PREVIEW MODAL -->
+<div id="salesImportModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeSalesImportModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeSalesImportModal()">✕</button>
+      <div class="modal-title">Review Import</div>
+      <div class="modal-sub">AI extracted this from your Toast report — confirm before saving</div>
+      <div id="salesImportPreview"></div>
+      <button class="btn-primary" onclick="confirmSalesImport()">✓ Save Sales Data</button>
+      <button class="btn-secondary" onclick="closeSalesImportModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 <div id="ingModal" style="display:none">
   <div class="modal-overlay" onclick="if(event.target===this)closeIngModal()">
     <div class="modal">
@@ -1043,12 +1281,14 @@ async function loadAll() {
     createdAt:r.created_at, updatedAt:r.updated_at
   }));
   await loadIngredients();
+  await loadSales();
+  await loadLabor();
 
   if (entries.length === 0) await seedSampleData();
   refreshAll();
 }
 
-function refreshAll() { refreshDashboard(); refreshHistory(); refreshReports(); refreshArchive(); refreshRecipes(); refreshIngredients(); }
+function refreshAll() { refreshDashboard(); refreshHistory(); refreshReports(); refreshArchive(); refreshRecipes(); refreshIngredients(); refreshSales(); refreshLabor(); }
 
 async function seedSampleData() {
   const samples = [
@@ -1088,6 +1328,8 @@ function showView(name, el) {
   if (name==='archive')     refreshArchive();
   if (name==='recipes')     refreshRecipes();
   if (name==='ingredients') refreshIngredients();
+  if (name==='sales')       refreshSales();
+  if (name==='labor')       refreshLabor();
 }
 
 // ─── DASHBOARD ────────────────────────────────────
@@ -1339,7 +1581,7 @@ Example:
     res = await fetch('/api/scan', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:1500, messages:[{role:'user', content}] })
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1500, messages:[{role:'user', content}] })
     });
   } catch(e) { throw new Error('Network error: '+e.message); }
 
@@ -2373,6 +2615,749 @@ function openRecipeDetail(id) {
 }
 
 function closeRecipeDetail() { document.getElementById('recipeDetailModal').style.display = 'none'; }
+
+// ─── LABOR ────────────────────────────────────────
+let laborData = [];
+let currentLaborPeriod = 'month';
+let pendingLaborImport = null;
+
+async function loadLabor() {
+  try {
+    const raw = await sbSelect('tp_labor');
+    laborData = raw.map(r => ({
+      id:r.id, date:r.date, total:parseFloat(r.total)||0,
+      hours:parseFloat(r.hours)||0, notes:r.notes||'',
+      byRole:r.by_role||{}, employees:r.employees||[],
+      source:r.source||'manual'
+    }));
+  } catch(e) { laborData = []; }
+}
+
+function refreshLabor() {
+  updateLaborStats();
+  renderLaborByRole();
+  renderLaborDaily();
+}
+
+function getLaborPeriodData(period) {
+  const now = new Date();
+  if (period==='week')    { const s=new Date(now);s.setDate(now.getDate()-7);return laborData.filter(d=>new Date(d.date)>=s); }
+  if (period==='month')   { const s=new Date(now.getFullYear(),now.getMonth(),1);return laborData.filter(d=>new Date(d.date)>=s); }
+  if (period==='quarter') { const s=new Date(now);s.setMonth(now.getMonth()-3);return laborData.filter(d=>new Date(d.date)>=s); }
+  return laborData;
+}
+
+function updateLaborStats() {
+  const now = new Date();
+  const soM = new Date(now.getFullYear(),now.getMonth(),1);
+  const monthLabor = laborData.filter(d=>new Date(d.date)>=soM);
+  const totalLabor = monthLabor.reduce((s,d)=>s+d.total,0);
+  const totalHours = monthLabor.reduce((s,d)=>s+d.hours,0);
+
+  document.getElementById('labor-month-total').textContent = fmt(totalLabor);
+  document.getElementById('labor-month-sub').textContent = monthLabor.length+' day'+(monthLabor.length!==1?'s':'')+' recorded';
+  document.getElementById('labor-hours').textContent = totalHours.toFixed(1)+'h';
+
+  // Get sales for same period
+  const monthSales = salesData.filter(s=>new Date(s.date)>=soM);
+  const totalSales = monthSales.reduce((s,d)=>s+d.total,0);
+
+  // Get food costs for same period
+  const foodCosts = entries.filter(e=>new Date(e.date)>=soM&&e.category==='Food & Ingredients').reduce((s,e)=>s+e.amount,0);
+
+  const laborPct  = totalSales>0 ? (totalLabor/totalSales)*100 : null;
+  const primeCost = totalSales>0 ? ((totalLabor+foodCosts)/totalSales)*100 : null;
+
+  // Labor %
+  if (laborPct!==null) {
+    const cls = laborPct<=30?'cost-pct-good':laborPct<=35?'cost-pct-warn':'cost-pct-bad';
+    document.getElementById('labor-cost-pct').textContent = laborPct.toFixed(1)+'%';
+    document.getElementById('labor-cost-pct').className = 'stat-value '+cls;
+  } else {
+    document.getElementById('labor-cost-pct').textContent = '—';
+  }
+
+  // Prime Cost
+  if (primeCost!==null) {
+    const cls = primeCost<=55?'cost-pct-good':primeCost<=60?'cost-pct-warn':'cost-pct-bad';
+    document.getElementById('prime-cost-pct').textContent = primeCost.toFixed(1)+'%';
+    document.getElementById('prime-cost-pct').className = 'stat-value '+cls;
+
+    // Gauge
+    const gauge = document.getElementById('primeCostGauge');
+    gauge.style.display='block';
+    const barW = Math.min(primeCost, 80);
+    const barColor = primeCost<=55?'var(--green)':primeCost<=60?'#E67E22':'var(--red)';
+    document.getElementById('primeCostBar').style.width = (barW/80*100)+'%';
+    document.getElementById('primeCostBar').style.background = barColor;
+    const msgEl = document.getElementById('primeCostMsg');
+    if (primeCost<=55) {
+      msgEl.style.background='#D5F5E3'; msgEl.style.color='var(--green)';
+      msgEl.textContent='✅ Prime cost is healthy. Keep it up!';
+    } else if (primeCost<=60) {
+      msgEl.style.background='#FEF9EC'; msgEl.style.color='#856404';
+      msgEl.textContent='⚠️ Prime cost is getting high. Review portion sizes or scheduling.';
+    } else {
+      msgEl.style.background='#FFEAEA'; msgEl.style.color='var(--red)';
+      msgEl.textContent='❌ Prime cost too high. Action needed on food cost or labor.';
+    }
+  } else {
+    document.getElementById('prime-cost-pct').textContent = '—';
+  }
+}
+
+function setLaborPeriod(p, el) {
+  currentLaborPeriod = p;
+  document.querySelectorAll('#view-labor .period-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  refreshLabor();
+}
+
+function renderLaborByRole() {
+  const filtered = getLaborPeriodData(currentLaborPeriod);
+  const byRole = {}, byRoleHours = {};
+  filtered.forEach(d => {
+    Object.entries(d.byRole||{}).forEach(([role,cost])=>{
+      byRole[role] = (byRole[role]||0)+cost;
+    });
+    (d.employees||[]).forEach(e=>{
+      if (!byRoleHours[e.role]) byRoleHours[e.role]=0;
+      byRoleHours[e.role] += e.regularHours+e.overtimeHours;
+    });
+  });
+  const grand = Object.values(byRole).reduce((s,v)=>s+v,0);
+  const grandHours = Object.values(byRoleHours).reduce((s,v)=>s+v,0);
+  const sorted = Object.entries(byRole).sort((a,b)=>b[1]-a[1]);
+
+  document.getElementById('labor-role-total').textContent = fmt(grand);
+  document.getElementById('labor-role-hours').textContent = grandHours.toFixed(1)+'h';
+  document.getElementById('labor-role-rows').innerHTML = sorted.length ? sorted.map(([role,cost])=>{
+    const hrs = byRoleHours[role]||0;
+    const pct = grand>0?Math.round(cost/grand*100):0;
+    return `<div class="report-row" style="grid-template-columns:1fr auto auto auto">
+      <div class="report-cat"><div class="cat-dot" style="background:#5B8DB8"></div><span style="font-weight:700">${role}</span></div>
+      <div class="report-mono report-pct">${hrs.toFixed(1)}h</div>
+      <div class="report-mono">${fmt(cost)}</div>
+      <div class="report-mono report-pct">${pct}%</div>
+    </div>`;
+  }).join('') : '<div class="empty" style="padding:20px"><div class="empty-text">No data</div></div>';
+}
+
+function renderLaborDaily() {
+  const filtered = getLaborPeriodData(currentLaborPeriod);
+  const sorted = [...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const el = document.getElementById('labor-daily-list');
+  if (!sorted.length) {
+    el.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">No labor data yet.<br>Import a Toast payroll CSV or enter manually.</div></div>';
+    return;
+  }
+  el.innerHTML = sorted.map(d=>`
+    <div class="labor-day-card">
+      <div class="labor-day-icon">👥</div>
+      <div class="labor-day-info">
+        <div class="labor-day-date">${fmtDate(d.date)}</div>
+        <div class="labor-day-meta">${d.hours?d.hours.toFixed(1)+'h worked · ':''}${d.employees?.length||0} employees · ${d.source}</div>
+      </div>
+      <div class="labor-day-cost">${fmt(d.total)}</div>
+    </div>`).join('');
+}
+
+// ── PARSE TOAST PAYROLL CSV ──
+function parseToastPayroll(text) {
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  if (lines.length < 2) return null;
+
+  // Parse header
+  const header = parseCSVLine(lines[0]);
+  const employees = [];
+  let totalPay = 0, totalHours = 0;
+  let date = today();
+
+  // Try to get date from filename pattern in text or use today
+  const dateMatch = text.match(/(\d{4})_(\d{2})_(\d{2})/);
+  if (dateMatch) date = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+
+  lines.slice(1).forEach(line => {
+    if (!line.trim()) return;
+    const cols = parseCSVLine(line);
+    if (cols.length < 8) return;
+
+    const name        = cols[0]?.trim().replace(/"/g,'');
+    const role        = cols[1]?.trim();
+    const regHours    = parseFloat(cols[2])||0;
+    const otHours     = parseFloat(cols[3])||0;
+    const hourlyRate  = parseFloat(cols[4])||0;
+    const regPay      = parseFloat(cols[5])||0;
+    const otPay       = parseFloat(cols[6])||0;
+    const totalEmpPay = parseFloat(cols[7])||0;
+
+    if (!name || name===header[0]) return; // skip header row if repeated
+
+    employees.push({ name, role, regularHours:regHours, overtimeHours:otHours, hourlyRate, regularPay:regPay, overtimePay:otPay, totalPay:totalEmpPay });
+    totalPay   += totalEmpPay;
+    totalHours += regHours + otHours;
+  });
+
+  if (!employees.length) return null;
+
+  // Group by role
+  const byRole = {};
+  employees.forEach(e => {
+    if (!byRole[e.role]) byRole[e.role] = 0;
+    byRole[e.role] += e.totalPay;
+  });
+
+  return { date, total:totalPay, hours:totalHours, byRole, employees, source:'csv' };
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let current = '', inQuotes = false;
+  for (let i=0; i<line.length; i++) {
+    if (line[i]==='"') { inQuotes=!inQuotes; }
+    else if (line[i]===',' && !inQuotes) { result.push(current.trim()); current=''; }
+    else { current+=line[i]; }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+// ── CSV HANDLER ──
+function handleLaborCSV(ev) {
+  const files = Array.from(ev.target.files);
+  if (!files.length) return;
+  const r = new FileReader();
+  r.onload = (e) => {
+    const text = e.target.result;
+    // Try to get date from filename
+    const fname = files[0].name;
+    const parsed = parseToastPayroll(text);
+    if (parsed) {
+      // Try date from filename: payroll_export_2026_05_13.csv
+      const dm = fname.match(/(\d{4})_(\d{2})_(\d{2})/);
+      if (dm) parsed.date = `${dm[1]}-${dm[2]}-${dm[3]}`;
+      pendingLaborImport = parsed;
+      showLaborImportPreview(parsed);
+    } else {
+      toast('Could not read payroll CSV — check format');
+    }
+  };
+  r.readAsText(files[0]);
+  ev.target.value='';
+}
+
+function showLaborImportPreview(data) {
+  const empRows = (data.employees||[]).map(e=>`
+    <div class="emp-row">
+      <div><div class="emp-name">${e.name}</div><div class="emp-role">${e.role}</div></div>
+      <div class="emp-mono">${(e.regularHours+e.overtimeHours).toFixed(2)}h</div>
+      <div class="emp-mono">${e.hourlyRate?'$'+e.hourlyRate+'/h':'—'}</div>
+      <div class="emp-mono" style="color:#5B8DB8;font-weight:700">${fmt(e.totalPay)}</div>
+    </div>`).join('');
+
+  const roleRows = Object.entries(data.byRole||{}).map(([role,cost])=>`
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="font-weight:700">${role}</span>
+      <span style="font-family:'DM Mono',monospace;color:#5B8DB8">${fmt(cost)}</span>
+    </div>`).join('');
+
+  document.getElementById('laborImportPreview').innerHTML = `
+    <div style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px">
+      <div class="form-row" style="margin-bottom:14px">
+        <div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray)">Date</div><div style="font-size:15px;font-weight:800;margin-top:4px">${fmtDate(data.date)}</div></div>
+        <div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray)">Total Labor</div><div style="font-size:24px;font-weight:900;color:#5B8DB8;margin-top:4px">${fmt(data.total)}</div></div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--warm-gray);margin-bottom:12px">⏱ ${data.hours.toFixed(2)} total hours · ${data.employees.length} employees</div>
+      ${roleRows?`<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px">By Role</div>${roleRows}</div>`:''}
+      <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px">Employees</div>
+      <div style="background:#F8F8F8;border-radius:8px;overflow:hidden">
+        <div class="emp-row" style="background:var(--charcoal);color:white;font-size:10px;font-weight:800;text-transform:uppercase">
+          <div>Name / Role</div><div>Hours</div><div>Rate</div><div>Pay</div>
+        </div>
+        ${empRows}
+      </div>
+    </div>`;
+  document.getElementById('laborImportModal').style.display='block';
+}
+
+function closeLaborImportModal() { document.getElementById('laborImportModal').style.display='none'; pendingLaborImport=null; }
+
+function confirmLaborImport() { _confirmLaborImport(); }
+async function _confirmLaborImport() {
+  if (!pendingLaborImport) return;
+  const d = pendingLaborImport;
+  const entry = { id:uid(), date:d.date, total:d.total, hours:d.hours, notes:'', byRole:d.byRole, employees:d.employees, source:'csv' };
+  showLoading(true);
+  try {
+    await sbInsert('tp_labor',{id:entry.id,date:entry.date,total:entry.total,hours:entry.hours,notes:entry.notes,by_role:entry.byRole,employees:entry.employees,source:entry.source});
+    laborData.unshift(entry);
+    closeLaborImportModal(); refreshLabor(); refreshSales(); toast('✓ Payroll imported!');
+  } catch(e) { toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+// ── MANUAL LABOR ──
+function openManualLaborModal() {
+  document.getElementById('ml-date').value = today();
+  document.getElementById('ml-total').value = '';
+  document.getElementById('ml-hours').value = '';
+  document.getElementById('ml-notes').value = '';
+  document.getElementById('ml-role-rows').innerHTML = `<div class="form-row" style="margin-bottom:8px"><div class="field"><label>Role</label><input type="text" class="ml-role-name" placeholder="e.g. Cook"></div><div class="field"><label>Cost ($)</label><input type="number" class="ml-role-cost" placeholder="0.00" step="0.01"></div></div>`;
+  document.getElementById('manualLaborModal').style.display='block';
+}
+function closeManualLaborModal() { document.getElementById('manualLaborModal').style.display='none'; }
+function addLaborRoleRow() {
+  document.getElementById('ml-role-rows').insertAdjacentHTML('beforeend',`<div class="form-row" style="margin-bottom:8px"><div class="field"><label>Role</label><input type="text" class="ml-role-name" placeholder="e.g. Server"></div><div class="field"><label>Cost ($)</label><input type="number" class="ml-role-cost" placeholder="0.00" step="0.01"></div></div>`);
+}
+
+function saveManualLabor() { _saveManualLabor(); }
+async function _saveManualLabor() {
+  const total = parseFloat(document.getElementById('ml-total').value);
+  if (!total||total<=0) { toast('Enter total labor cost'); return; }
+  const byRole = {};
+  document.querySelectorAll('#ml-role-rows .form-row').forEach(row=>{
+    const name = row.querySelector('.ml-role-name')?.value.trim();
+    const cost = parseFloat(row.querySelector('.ml-role-cost')?.value)||0;
+    if (name&&cost) byRole[name]=cost;
+  });
+  const entry = { id:uid(), date:document.getElementById('ml-date').value||today(), total, hours:parseFloat(document.getElementById('ml-hours').value)||0, notes:document.getElementById('ml-notes').value.trim(), byRole, employees:[], source:'manual' };
+  showLoading(true);
+  try {
+    await sbInsert('tp_labor',{id:entry.id,date:entry.date,total:entry.total,hours:entry.hours,notes:entry.notes,by_role:entry.byRole,employees:entry.employees,source:entry.source});
+    laborData.unshift(entry);
+    closeManualLaborModal(); refreshLabor(); toast('✓ Labor saved!');
+  } catch(e) { toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+// ─── SALES ────────────────────────────────────────
+let salesData = [];
+let currentSalesPeriod = 'month';
+let pendingSalesImport = null;
+
+async function loadSales() {
+  try {
+    const raw = await sbSelect('tp_sales');
+    salesData = raw.map(r => ({
+      id: r.id, date: r.date, total: parseFloat(r.total)||0,
+      covers: r.covers||0, notes: r.notes||'',
+      byCategory: r.by_category||{}, topItems: r.top_items||[],
+      source: r.source||'manual'
+    }));
+  } catch(e) { salesData = []; }
+}
+
+function refreshSales() {
+  updateSalesStats();
+  renderSalesList();
+  renderSalesByCategory();
+  renderTopItems();
+}
+
+function getSalesPeriodData(period) {
+  const now = new Date();
+  if (period==='week') { const s=new Date(now);s.setDate(now.getDate()-7);return salesData.filter(s2=>new Date(s2.date)>=s); }
+  if (period==='month') { const s=new Date(now.getFullYear(),now.getMonth(),1);return salesData.filter(s2=>new Date(s2.date)>=s); }
+  if (period==='quarter') { const s=new Date(now);s.setMonth(now.getMonth()-3);return salesData.filter(s2=>new Date(s2.date)>=s); }
+  return salesData;
+}
+
+function updateSalesStats() {
+  const now = new Date();
+  const soM = new Date(now.getFullYear(),now.getMonth(),1);
+  const monthSales = salesData.filter(s=>new Date(s.date)>=soM);
+  const totalRev = monthSales.reduce((s,d)=>s+d.total,0);
+  const avgRev = monthSales.length ? totalRev/monthSales.length : 0;
+
+  // Get total costs for same period from entries
+  const monthCosts = entries.filter(e=>new Date(e.date)>=soM&&e.category==='Food & Ingredients').reduce((s,e)=>s+e.amount,0);
+  const costPct = totalRev > 0 ? Math.round((monthCosts/totalRev)*100) : null;
+
+  document.getElementById('sales-month-rev').textContent = fmt(totalRev);
+  document.getElementById('sales-month-sub').textContent = monthSales.length+' day'+(monthSales.length!==1?'s':'')+' recorded';
+  document.getElementById('sales-avg').textContent = fmt(avgRev);
+
+  if (costPct !== null) {
+    const cls = costPct<=30?'cost-pct-good':costPct<=35?'cost-pct-warn':'cost-pct-bad';
+    document.getElementById('sales-cost-pct').textContent = costPct+'%';
+    document.getElementById('sales-cost-pct').className = 'stat-value '+cls;
+  } else {
+    document.getElementById('sales-cost-pct').textContent = '—';
+  }
+
+  const best = monthSales.sort((a,b)=>b.total-a.total)[0];
+  if (best) {
+    document.getElementById('sales-best-day').textContent = fmtDate(best.date);
+    document.getElementById('sales-best-amt').textContent = fmt(best.total);
+  }
+}
+
+function setSalesPeriod(p, el) {
+  currentSalesPeriod = p;
+  document.querySelectorAll('#view-sales .period-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  refreshSales();
+}
+
+function renderSalesList() {
+  const filtered = getSalesPeriodData(currentSalesPeriod);
+  const sorted = [...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const el = document.getElementById('sales-daily-list');
+  if (!sorted.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">💰</div><div class="empty-text">No sales data yet.<br>Import a Toast CSV or enter manually.</div></div>`;
+    return;
+  }
+  el.innerHTML = sorted.map(s => {
+    const cats = Object.keys(s.byCategory||{}).slice(0,2).join(', ');
+    return `<div class="sales-day-card" onclick="openSalesDayDetail('${s.id}')">
+      <div class="sales-day-icon">💰</div>
+      <div class="sales-day-info">
+        <div class="sales-day-date">${fmtDate(s.date)}</div>
+        <div class="sales-day-meta">${s.covers?s.covers+' covers · ':''}${cats||s.notes||s.source}</div>
+      </div>
+      <div class="sales-day-rev">${fmt(s.total)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderSalesByCategory() {
+  const filtered = getSalesPeriodData(currentSalesPeriod);
+  const combined = {};
+  filtered.forEach(s => {
+    Object.entries(s.byCategory||{}).forEach(([cat,amt])=>{
+      combined[cat] = (combined[cat]||0) + parseFloat(amt);
+    });
+  });
+  const grand = Object.values(combined).reduce((s,v)=>s+v,0);
+  const sorted = Object.entries(combined).sort((a,b)=>b[1]-a[1]);
+  document.getElementById('sales-grand-total').textContent = fmt(grand||filtered.reduce((s,d)=>s+d.total,0));
+  document.getElementById('sales-cat-rows').innerHTML = sorted.length ? sorted.map(([cat,total])=>`
+    <div class="report-row" style="grid-template-columns:1fr auto auto auto">
+      <div class="report-cat"><div class="cat-dot" style="background:var(--green)"></div><span>${cat}</span></div>
+      <div class="report-mono">${fmt(total)}</div>
+      <div class="report-mono report-pct">—</div>
+      <div class="report-mono report-pct">${grand>0?Math.round(total/grand*100):0}%</div>
+    </div>`).join('')
+    : '<div class="empty" style="padding:20px"><div class="empty-text">No category data</div></div>';
+}
+
+function renderTopItems() {
+  const filtered = getSalesPeriodData(currentSalesPeriod);
+  const combined = {};
+  filtered.forEach(s => {
+    (s.topItems||[]).forEach(item=>{
+      if (!combined[item.name]) combined[item.name]={qty:0,revenue:0};
+      combined[item.name].qty += item.qty||0;
+      combined[item.name].revenue += item.revenue||0;
+    });
+  });
+  const sorted = Object.entries(combined).sort((a,b)=>b[1].revenue-a[1].revenue).slice(0,10);
+  const el = document.getElementById('sales-top-items');
+  if (!sorted.length) { el.innerHTML='<div class="empty" style="padding:16px"><div class="empty-text">No item data yet</div></div>'; return; }
+  el.innerHTML = sorted.map(([name,data],i)=>`
+    <div class="sales-top-item">
+      <div>
+        <div class="sales-top-item-name">${i+1}. ${name}</div>
+        <div class="sales-top-item-meta">${data.qty} sold</div>
+      </div>
+      <div class="sales-top-item-rev">${data.revenue?fmt(data.revenue):'—'}</div>
+    </div>`).join('');
+}
+
+// ── MANUAL ENTRY ──
+function openManualSalesModal() {
+  document.getElementById('ms-date').value = today();
+  document.getElementById('ms-total').value = '';
+  document.getElementById('ms-covers').value = '';
+  document.getElementById('ms-notes').value = '';
+  document.getElementById('ms-cat-rows').innerHTML = manualSalesCatRow();
+  document.getElementById('ms-item-rows').innerHTML = manualSalesItemRow();
+  document.getElementById('manualSalesModal').style.display = 'block';
+}
+function closeManualSalesModal() { document.getElementById('manualSalesModal').style.display='none'; }
+
+function manualSalesCatRow() {
+  return `<div class="form-row" style="margin-bottom:8px">
+    <div class="field"><label>Category</label><input type="text" class="ms-cat-name" placeholder="e.g. Burgers"></div>
+    <div class="field"><label>Amount ($)</label><input type="number" class="ms-cat-amt" placeholder="0.00" step="0.01"></div>
+  </div>`;
+}
+function manualSalesItemRow() {
+  return `<div class="form-row" style="margin-bottom:8px">
+    <div class="field"><label>Item</label><input type="text" class="ms-item-name" placeholder="e.g. Classic Burger"></div>
+    <div class="field"><label>Qty sold</label><input type="number" class="ms-item-qty" placeholder="0" min="0"></div>
+  </div>`;
+}
+function addSalesCatRow() { document.getElementById('ms-cat-rows').insertAdjacentHTML('beforeend',manualSalesCatRow()); }
+function addSalesItemRow() { document.getElementById('ms-item-rows').insertAdjacentHTML('beforeend',manualSalesItemRow()); }
+
+function saveManualSales() { _saveManualSales(); }
+async function _saveManualSales() {
+  const total = parseFloat(document.getElementById('ms-total').value);
+  if (!total||total<=0) { toast('Enter total revenue'); return; }
+  const dateVal = document.getElementById('ms-date').value;
+
+  const byCategory = {};
+  document.querySelectorAll('#ms-cat-rows .form-row').forEach(row=>{
+    const name = row.querySelector('.ms-cat-name')?.value.trim();
+    const amt  = parseFloat(row.querySelector('.ms-cat-amt')?.value)||0;
+    if (name && amt) byCategory[name] = amt;
+  });
+
+  const topItems = [];
+  document.querySelectorAll('#ms-item-rows .form-row').forEach(row=>{
+    const name = row.querySelector('.ms-item-name')?.value.trim();
+    const qty  = parseInt(row.querySelector('.ms-item-qty')?.value)||0;
+    if (name) topItems.push({name, qty, revenue:0});
+  });
+
+  const entry = {
+    id:uid(), date:dateVal||today(),
+    total, covers:parseInt(document.getElementById('ms-covers').value)||0,
+    notes:document.getElementById('ms-notes').value.trim(),
+    byCategory, topItems, source:'manual'
+  };
+  showLoading(true);
+  try {
+    await sbInsert('tp_sales',{id:entry.id,date:entry.date,total:entry.total,covers:entry.covers,notes:entry.notes,by_category:entry.byCategory,top_items:entry.topItems,source:entry.source});
+    salesData.unshift(entry);
+    closeManualSalesModal(); refreshSales(); toast('✓ Sales saved!');
+  } catch(e) { toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+// Handle multiple CSV files uploaded at once (all files from Toast ZIP)
+function handleSalesCSVMultiple(ev) {
+  const files = Array.from(ev.target.files);
+  if (!files.length) return;
+  // Read all files and merge
+  const results = {};
+  let pending = files.length;
+  files.forEach(file => {
+    const r = new FileReader();
+    r.onload = (e) => {
+      const text = e.target.result;
+      const fn = file.name.toLowerCase();
+      if (fn.includes('sales by day')) results.byDay = parseToastSalesByDay(text);
+      else if (fn.includes('net sales')) results.netSales = parseToastNetSales(text);
+      else if (fn.includes('sales category')) results.byCat = parseToastSalesCategory(text);
+      else if (fn.includes('service daypart')) results.daypart = parseToastDaypart(text);
+      else if (fn.includes('dining option')) results.dining = parseToastDining(text);
+      pending--;
+      if (pending === 0) {
+        // Merge all results
+        const base = results.byDay || results.netSales || {};
+        if (!base.total) { toast('Could not find sales total — try uploading "Sales by day.csv"'); return; }
+        if (results.byCat) base.byCategory = {...base.byCategory, ...results.byCat.byCategory};
+        if (results.daypart) base.byDaypart = results.daypart;
+        if (results.dining) base.byDining = results.dining;
+        base.source = 'csv';
+        pendingSalesImport = base;
+        showSalesImportPreview(base);
+      }
+    };
+    r.readAsText(file);
+  });
+  ev.target.value='';
+}
+
+function handleSalesCSV(ev) { handleSalesCSVMultiple(ev); }
+
+// Parse "Service Daypart summary.csv"
+function parseToastDaypart(text) {
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  const result = {};
+  lines.slice(1).forEach(line => {
+    const cols = line.split(',');
+    const name = cols[0]?.trim();
+    const sales = parseFloat(cols[2])||0;
+    if (name && sales > 0 && !/^total$/i.test(name)) result[name] = sales;
+  });
+  return result;
+}
+
+// Parse "Dining options summary.csv"
+function parseToastDining(text) {
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  const result = {};
+  lines.slice(1).forEach(line => {
+    const cols = line.split(',');
+    const name = cols[0]?.trim();
+    const sales = parseFloat(cols[2])||0;
+    if (name && sales > 0 && !/^total$/i.test(name)) result[name] = sales;
+  });
+  return result;
+}
+  const file = ev.target.files[0]; if(!file) return;
+
+  // Handle ZIP file (Toast exports as ZIP)
+  if (file.name.endsWith('.zip') || file.type === 'application/zip') {
+    toast('⚠️ Toast exports a ZIP — please unzip it first and upload individual CSV files');
+    // Try to process anyway using FileReader
+    const r = new FileReader();
+    r.onload = async(e) => {
+      // Since we can't unzip in browser easily, prompt user
+      toast('Please unzip the file and upload "Net sales summary.csv" or "Sales by day.csv"');
+    };
+    r.readAsArrayBuffer(file);
+    ev.target.value='';
+    return;
+  }
+
+  const r = new FileReader();
+  r.onload = (e) => {
+    const text = e.target.result;
+    const filename = file.name.toLowerCase();
+    let parsed = null;
+
+    if (filename.includes('sales by day')) {
+      parsed = parseToastSalesByDay(text);
+    } else if (filename.includes('net sales')) {
+      parsed = parseToastNetSales(text);
+    } else if (filename.includes('sales category')) {
+      parsed = parseToastSalesCategory(text);
+    } else {
+      // try all parsers
+      parsed = parseToastSalesByDay(text) || parseToastNetSales(text);
+    }
+
+    if (parsed) { pendingSalesImport = parsed; showSalesImportPreview(parsed); }
+    else { toast('Could not read this CSV — try "Sales by day.csv" from the ZIP'); }
+  };
+  r.readAsText(file);
+  ev.target.value='';
+}
+
+// Parse "Sales by day.csv" — format: yyyyMMdd, Net sales, Total orders, Total guests
+function parseToastSalesByDay(text) {
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  if (lines.length < 2) return null;
+  // skip header
+  const dataLine = lines[1];
+  const cols = dataLine.split(',');
+  if (!cols[0] || cols[0].length !== 8) return null;
+  const rawDate = cols[0]; // yyyyMMdd
+  const date = `${rawDate.slice(0,4)}-${rawDate.slice(4,6)}-${rawDate.slice(6,8)}`;
+  const total = parseFloat(cols[1])||0;
+  const orders = parseInt(cols[2])||0;
+  const guests = parseInt(cols[3])||0;
+  if (!total) return null;
+  return { date, total, covers: guests||orders, byCategory:{}, topItems:[], source:'csv', _orders:orders, _guests:guests };
+}
+
+// Parse "Net sales summary.csv" — format: Gross sales, Sales discounts, Sales refunds, Net sales
+function parseToastNetSales(text) {
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  if (lines.length < 2) return null;
+  const cols = lines[1].split(',');
+  const total = parseFloat(cols[3]||cols[0])||0;
+  if (!total) return null;
+  return { date: today(), total, covers:0, byCategory:{}, topItems:[], source:'csv' };
+}
+
+// Parse "Sales category summary.csv"
+function parseToastSalesCategory(text) {
+  const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
+  if (lines.length < 2) return null;
+  const byCategory = {};
+  let total = 0;
+  lines.slice(1).forEach(line => {
+    const cols = line.split(',');
+    const cat = cols[0]?.trim();
+    const netSales = parseFloat(cols[2])||0;
+    if (cat && netSales > 0 && !/^total$/i.test(cat) && !/No Sales Category/i.test(cat)) {
+      byCategory[cat] = netSales;
+    }
+    if (/^total$/i.test(cat)) total = netSales;
+  });
+  if (!total) return null;
+  return { date: today(), total, covers:0, byCategory, topItems:[], source:'csv' };
+}
+
+// ── IMAGE SCAN ──
+function handleSalesImage(ev) {
+  const file = ev.target.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload = async(e)=>{
+    showLoading(true);
+    document.getElementById('analyzingText').textContent = 'Reading sales report…';
+    document.getElementById('analyzingOverlay').classList.add('show');
+    try {
+      const {b64,mt} = await compressImage(e.target.result, file.type);
+      const prompt = `This is a Toast POS end-of-day sales report. Extract:
+- date (YYYY-MM-DD)
+- total net sales (number only)
+- number of covers or checks
+- sales by category if shown (object with category names and amounts)
+- top selling items if shown (array of {name, qty, revenue})
+Respond ONLY with JSON: {date, total, covers, byCategory, topItems}`;
+
+      const res = await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mt,data:b64}},{type:'text',text:prompt}]}]})});
+      const data = await res.json();
+      const text = data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+      const parsed = JSON.parse(text);
+      parsed.source = 'scan';
+      pendingSalesImport = parsed;
+      showSalesImportPreview(parsed);
+    } catch(err) { toast('Could not read image: '+err.message); }
+    finally { document.getElementById('analyzingOverlay').classList.remove('show'); showLoading(false); }
+  };
+  r.readAsDataURL(file);
+  ev.target.value='';
+}
+
+function showSalesImportPreview(data) {
+  const cats = Object.entries(data.byCategory||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700">${k}</span><span style="font-family:'DM Mono',monospace">${fmt(v)}</span></div>`).join('');
+  const daypart = Object.entries(data.byDaypart||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700">${k}</span><span style="font-family:'DM Mono',monospace">${fmt(v)}</span></div>`).join('');
+  const dining = Object.entries(data.byDining||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700">${k}</span><span style="font-family:'DM Mono',monospace">${fmt(v)}</span></div>`).join('');
+
+  document.getElementById('salesImportPreview').innerHTML = `
+    <div style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px">
+      <div class="form-row" style="margin-bottom:12px">
+        <div>
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray)">Date</div>
+          <div style="font-size:15px;font-weight:800;margin-top:4px">${fmtDate(data.date||today())}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray)">Net Sales</div>
+          <div style="font-size:24px;font-weight:900;color:var(--green);margin-top:4px">${fmt(data.total||0)}</div>
+        </div>
+      </div>
+      ${data.covers?`<div style="font-size:12px;font-weight:700;color:var(--warm-gray);margin-bottom:10px">👥 ${data.covers} guests · 🧾 ${data._orders||''} orders</div>`:''}
+      ${daypart?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px">By Daypart</div>${daypart}</div>`:''}
+      ${dining?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px">By Dining Option</div>${dining}</div>`:''}
+      ${cats?`<div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px">By Sales Category</div>${cats}</div>`:''}
+    </div>`;
+  document.getElementById('salesImportModal').style.display='block';
+}
+
+function closeSalesImportModal() { document.getElementById('salesImportModal').style.display='none'; pendingSalesImport=null; }
+
+function confirmSalesImport() { _confirmSalesImport(); }
+async function _confirmSalesImport() {
+  if (!pendingSalesImport) return;
+  const d = pendingSalesImport;
+  const entry = { id:uid(), date:d.date||today(), total:d.total||0, covers:d.covers||0, notes:'', byCategory:d.byCategory||{}, topItems:d.topItems||[], source:d.source||'import' };
+  showLoading(true);
+  try {
+    await sbInsert('tp_sales',{id:entry.id,date:entry.date,total:entry.total,covers:entry.covers,notes:entry.notes,by_category:entry.byCategory,top_items:entry.topItems,source:entry.source});
+    salesData.unshift(entry);
+    closeSalesImportModal(); refreshSales(); toast('✓ Sales imported!');
+  } catch(e) { toast('Error: '+e.message); }
+  showLoading(false);
+}
+
+function openSalesDayDetail(id) {
+  const s = salesData.find(x=>x.id===id);
+  if (!s) return;
+  const cats = Object.entries(s.byCategory||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700">${k}</span><span style="font-family:'DM Mono',monospace;color:var(--green)">${fmt(v)}</span></div>`).join('');
+  const items = (s.topItems||[]).map(i=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700">${i.name}</span><span style="font-size:12px;color:var(--warm-gray);font-weight:600">×${i.qty}${i.revenue?' · '+fmt(i.revenue):''}</span></div>`).join('');
+  alert(`${fmtDate(s.date)}\n\nTotal: ${fmt(s.total)}${s.covers?'\nCovers: '+s.covers:''}${s.notes?'\n'+s.notes:''}`);
+}
+
+// wire into refreshAll and showView
+const _origRefreshAll2 = refreshAll;
+function refreshAll() { _origRefreshAll2 && _origRefreshAll2(); refreshSales(); }
 
 init();
 
