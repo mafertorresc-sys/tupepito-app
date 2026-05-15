@@ -214,7 +214,38 @@
   .empty-text { font-size: 14px; line-height: 1.6; font-weight: 600; }
   .section-divider { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); margin: 20px 0 10px; font-weight: 800; }
 
-  /* ── LABOR ── */
+  /* ── MODULE NAV ── */
+  #module-nav { background: var(--ink); display: flex; overflow-x: auto; scrollbar-width: none; border-bottom: 2px solid rgba(255,255,255,0.06); }
+  #module-nav::-webkit-scrollbar { display: none; }
+  .mod-tab { padding: 13px 18px; color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; transition: all .2s; flex-shrink: 0; }
+  .mod-tab.active { color: var(--yellow); border-bottom-color: var(--yellow); }
+  .mod-tab:hover:not(.active) { color: white; }
+
+  /* ── SUB-NAV ── */
+  #sub-nav { background: var(--red-dark); overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  #sub-nav::-webkit-scrollbar { display: none; }
+  .sub-nav-group { display: flex; }
+  .sub-tab { padding: 9px 16px; color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all .2s; flex-shrink: 0; }
+  .sub-tab.active { color: white; border-bottom-color: white; }
+  .sub-tab:hover:not(.active) { color: rgba(255,255,255,0.9); }
+
+  /* ── DASHBOARD QUICK ACTIONS ── */
+  .dash-actions { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 16px; }
+  .dash-action-btn { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 6px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: all .2s; font-family: 'Nunito', sans-serif; }
+  .dash-action-btn:hover { border-color: var(--red); background: var(--red); color: white; }
+  .dash-action-btn.primary { background: var(--red); color: white; border-color: var(--red); }
+  .dash-action-btn.primary:hover { background: var(--red-dark); }
+  .dash-action-icon { font-size: 22px; line-height: 1; }
+  .dash-action-label { font-size: 10px; font-weight: 800; text-align: center; line-height: 1.2; }
+
+  /* ── DASH ALERTS ── */
+  .dash-alert { display: flex; align-items: center; gap: 10px; background: var(--yellow-light); border: 1.5px solid var(--yellow); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all .2s; }
+  .dash-alert:hover { background: var(--yellow); }
+  .dash-alert.red { background: #FFEAEA; border-color: var(--red); }
+  .dash-alert.green { background: #D5F5E3; border-color: #A8D5B8; color: var(--green); }
+  .dash-alert-icon { font-size: 18px; flex-shrink: 0; }
+  .dash-alert-text { flex: 1; }
+  .dash-alert-arrow { color: var(--warm-gray); font-size: 16px; }
   .labor-day-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; cursor: pointer; transition: transform .15s, box-shadow .15s; }
   .labor-day-card:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(91,141,184,.12); }
   .labor-day-icon { width: 38px; height: 38px; border-radius: 10px; background: #D6EAF8; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
@@ -385,34 +416,135 @@
   <div class="header-date" id="headerDate"></div>
 </header>
 
-<nav>
-  <div class="nav-tab active" onclick="showView('dashboard',this)">Dashboard</div>
-  <div class="nav-tab" onclick="showView('scan',this)">📷 Scan</div>
-  <div class="nav-tab" onclick="showView('manual',this)">+ Entry</div>
-  <div class="nav-tab" onclick="showView('history',this)">History</div>
-  <div class="nav-tab" onclick="showView('reports',this)">Reports</div>
-  <div class="nav-tab" onclick="showView('archive',this)">🗄 Archive</div>
-  <div class="nav-tab" onclick="showView('recipes',this)">🍔 Recipes</div>
-  <div class="nav-tab" onclick="showView('ingredients',this)">📦 Ingredients</div>
-  <div class="nav-tab" onclick="showView('sales',this)">💰 Sales</div>
-  <div class="nav-tab" onclick="showView('labor',this)">👥 Labor</div>
+<nav id="module-nav">
+  <div class="mod-tab active" onclick="showModule('dashboard',this)">📊 Dashboard</div>
+  <div class="mod-tab" onclick="showModule('finances',this)">💰 Finances</div>
+  <div class="mod-tab" onclick="showModule('menu',this)">🍔 Menu</div>
+  <div class="mod-tab" onclick="showModule('performance',this)">📈 Performance</div>
+  <div class="mod-tab" onclick="showModule('settings',this)">⚙️ Settings</div>
 </nav>
+
+<!-- SUB-NAV (shown per module) -->
+<div id="sub-nav" style="display:none">
+  <!-- Finances sub-nav -->
+  <div class="sub-nav-group" id="subnav-finances">
+    <div class="sub-tab active" onclick="showView('scan',this,'finances')">📷 Scan</div>
+    <div class="sub-tab" onclick="showView('manual',this,'finances')">+ Entry</div>
+    <div class="sub-tab" onclick="showView('history',this,'finances')">History</div>
+    <div class="sub-tab" onclick="showView('reports',this,'finances')">Reports</div>
+    <div class="sub-tab" onclick="showView('archive',this,'finances')">🗄 Archive</div>
+  </div>
+  <!-- Menu sub-nav -->
+  <div class="sub-nav-group" id="subnav-menu" style="display:none">
+    <div class="sub-tab active" onclick="showView('recipes',this,'menu')">Recipes</div>
+    <div class="sub-tab" onclick="showView('ingredients',this,'menu')">Ingredients</div>
+    <div class="sub-tab" onclick="showView('prepitems',this,'menu')">Prep Items</div>
+    <div class="sub-tab" onclick="showView('productcost',this,'menu')">Product Cost</div>
+  </div>
+  <!-- Performance sub-nav -->
+  <div class="sub-nav-group" id="subnav-performance" style="display:none">
+    <div class="sub-tab active" onclick="showView('sales',this,'performance')">Sales</div>
+    <div class="sub-tab" onclick="showView('labor',this,'performance')">Labor</div>
+    <div class="sub-tab" onclick="showView('primecost',this,'performance')">Prime Cost</div>
+  </div>
+  <!-- Settings sub-nav -->
+  <div class="sub-nav-group" id="subnav-settings" style="display:none">
+    <div class="sub-tab active" onclick="showView('settings-general',this,'settings')">General</div>
+  </div>
+</div>
 
 <main>
 
-  <!-- DASHBOARD -->
+  <!-- DASHBOARD — Command Center -->
   <div class="view active" id="view-dashboard">
-    <p class="section-title">Overview</p>
-    <p class="section-sub" id="dash-period"></p>
-    <div id="locked-notice-dash"></div>
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-value" id="stat-month">$0</div><div class="stat-sub" id="stat-entries">0 entries</div></div>
-      <div class="stat-card"><div class="stat-label">This Week</div><div class="stat-value" id="stat-week">$0</div><div class="stat-sub">7-day total</div></div>
-      <div class="stat-card full"><div class="stat-label">Top Category</div><div class="stat-value" id="stat-top-cat">—</div><div class="stat-sub" id="stat-top-amt"></div></div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="dash-actions">
+      <button class="dash-action-btn primary" onclick="showModule('finances', document.querySelector('.mod-tab:nth-child(2)'));showView('scan',null,'finances')">
+        <div class="dash-action-icon">📷</div>
+        <div class="dash-action-label">Scan Invoice</div>
+      </button>
+      <button class="dash-action-btn" onclick="showModule('performance', document.querySelector('.mod-tab:nth-child(4)'));showView('sales',null,'performance')">
+        <div class="dash-action-icon">💰</div>
+        <div class="dash-action-label">Add Sales</div>
+      </button>
+      <button class="dash-action-btn" onclick="showModule('menu', document.querySelector('.mod-tab:nth-child(3)'));showView('recipes',null,'menu')">
+        <div class="dash-action-icon">🍔</div>
+        <div class="dash-action-label">Recipes</div>
+      </button>
+      <button class="dash-action-btn" onclick="showModule('finances', document.querySelector('.mod-tab:nth-child(2)'));showView('manual',null,'finances')">
+        <div class="dash-action-icon">✏️</div>
+        <div class="dash-action-label">Add Expense</div>
+      </button>
     </div>
+
+    <!-- ALERTS BANNER -->
+    <div id="dash-alerts"></div>
+
+    <!-- KPI ROW -->
+    <div style="margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--warm-gray)" id="dash-period"></div>
+    <div id="locked-notice-dash"></div>
+    <div class="stats-grid" style="margin-bottom:16px">
+      <div class="stat-card">
+        <div class="stat-label">This Month Expenses</div>
+        <div class="stat-value" id="stat-month">$0</div>
+        <div class="stat-sub" id="stat-entries">0 entries</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">This Month Sales</div>
+        <div class="stat-value" id="stat-sales" style="color:var(--green)">$0</div>
+        <div class="stat-sub" id="stat-sales-days">0 days recorded</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Prime Cost %</div>
+        <div class="stat-value" id="stat-prime" style="font-size:22px">—</div>
+        <div class="stat-sub">food + labor ÷ sales</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Top Expense</div>
+        <div class="stat-value" id="stat-top-cat" style="font-size:18px">—</div>
+        <div class="stat-sub" id="stat-top-amt"></div>
+      </div>
+    </div>
+
+    <!-- SPENDING BREAKDOWN -->
     <div class="breakdown"><div class="breakdown-title">Spending by Category</div><div id="breakdown-bars"></div></div>
+
+    <!-- RECENT ACTIVITY -->
     <div class="section-divider">Recent Entries</div>
     <div class="entries-list" id="recent-list"></div>
+  </div>
+
+  <!-- PREP ITEMS stub -->
+  <div class="view" id="view-prepitems">
+    <p class="section-title">Prep Items</p>
+    <p class="section-sub">Define conversions from raw ingredients to usable units</p>
+    <div class="empty"><div class="empty-icon">🔄</div><div class="empty-text">Coming soon — define how raw purchases<br>convert into recipe-ready units.</div></div>
+  </div>
+
+  <!-- PRODUCT COST stub -->
+  <div class="view" id="view-productcost">
+    <p class="section-title">Product Cost</p>
+    <p class="section-sub">Cost per dish based on ingredients and prep items</p>
+    <div class="empty"><div class="empty-icon">💡</div><div class="empty-text">Coming soon — see your cost per dish,<br>food cost % and suggested sale price.</div></div>
+  </div>
+
+  <!-- PRIME COST stub -->
+  <div class="view" id="view-primecost">
+    <p class="section-title">Prime Cost</p>
+    <p class="section-sub">Food cost + Labor cost vs Sales</p>
+    <div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Coming soon — your prime cost dashboard<br>with trends and benchmarks.</div></div>
+  </div>
+
+  <!-- SETTINGS stub -->
+  <div class="view" id="view-settings-general">
+    <p class="section-title">Settings</p>
+    <p class="section-sub">App configuration</p>
+    <div class="form-grid">
+      <div class="field"><label>Restaurant Name</label><input type="text" id="setting-name" placeholder="Tu Pepito" value="Tu Pepito"></div>
+      <div class="field"><label>Currency</label><select id="setting-currency"><option>USD $</option><option>MXN $</option><option>EUR €</option></select></div>
+    </div>
+    <button class="btn-primary" style="margin-top:16px" onclick="toast('✓ Settings saved')">Save Settings</button>
   </div>
 
   <!-- SCAN -->
@@ -1262,20 +1394,73 @@ function today()    { return new Date().toISOString().split('T')[0]; }
 function daysAgo(n) { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().split('T')[0]; }
 function uid()      { return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
 
-// ─── NAV ──────────────────────────────────────────
-function showView(name, el) {
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('view-'+name).classList.add('active');
+// ─── MODULE NAVIGATION ────────────────────────────
+const MODULE_VIEWS = {
+  dashboard:   null,
+  finances:    'scan',
+  menu:        'recipes',
+  performance: 'sales',
+  settings:    'settings-general'
+};
+
+let currentModule = 'dashboard';
+let currentView   = 'dashboard';
+
+function showModule(module, el) {
+  currentModule = module;
+
+  // Update module tabs
+  document.querySelectorAll('.mod-tab').forEach(t=>t.classList.remove('active'));
   if (el) el.classList.add('active');
-  if (name==='dashboard') refreshDashboard();
-  if (name==='history')   refreshHistory();
-  if (name==='reports')   refreshReports();
-  if (name==='archive')     refreshArchive();
-  if (name==='recipes')     refreshRecipes();
-  if (name==='ingredients') refreshIngredients();
-  if (name==='sales')       refreshSales();
-  if (name==='labor')       refreshLabor();
+
+  // Show/hide sub-nav
+  const subNav = document.getElementById('sub-nav');
+  document.querySelectorAll('.sub-nav-group').forEach(g=>g.style.display='none');
+
+  if (module === 'dashboard') {
+    subNav.style.display = 'none';
+    showView('dashboard', null, 'dashboard');
+  } else {
+    subNav.style.display = 'block';
+    const group = document.getElementById('subnav-'+module);
+    if (group) {
+      group.style.display = 'flex';
+      // activate first sub-tab and show its view
+      const firstTab = group.querySelector('.sub-tab');
+      if (firstTab) {
+        group.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
+        firstTab.classList.add('active');
+      }
+    }
+    showView(MODULE_VIEWS[module], null, module);
+  }
+}
+
+function showView(name, el, module) {
+  if (!name) return;
+  currentView = name;
+
+  // Hide all views
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const target = document.getElementById('view-'+name);
+  if (target) target.classList.add('active');
+
+  // Update sub-tab if el provided
+  if (el && module && module !== 'dashboard') {
+    const group = document.getElementById('subnav-'+module);
+    if (group) group.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Refresh relevant data
+  if (name==='dashboard')      refreshDashboard();
+  if (name==='history')        refreshHistory();
+  if (name==='reports')        refreshReports();
+  if (name==='archive')        refreshArchive();
+  if (name==='recipes')        refreshRecipes();
+  if (name==='ingredients')    refreshIngredients();
+  if (name==='sales')          refreshSales();
+  if (name==='labor')          refreshLabor();
 }
 
 // ─── DASHBOARD ────────────────────────────────────
@@ -1283,28 +1468,50 @@ function refreshDashboard() {
   const now = new Date();
   const monthKey = mkKey(now);
   const isLocked = lockedMonths.includes(monthKey);
-  document.getElementById('dash-period').textContent = now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  document.getElementById('dash-period').textContent =
+    now.toLocaleDateString('en-US',{month:'long',year:'numeric'}).toUpperCase();
   document.getElementById('locked-notice-dash').innerHTML = isLocked
     ? `<div class="locked-notice">🔒 This month is closed and locked.</div>` : '';
 
   const soM = new Date(now.getFullYear(),now.getMonth(),1);
   const soW = new Date(now); soW.setDate(now.getDate()-7);
-  const mE = entries.filter(e=>new Date(e.date)>=soM);
-  const wE = entries.filter(e=>new Date(e.date)>=soW);
+  const mE  = entries.filter(e=>new Date(e.date)>=soM);
+  const wE  = entries.filter(e=>new Date(e.date)>=soW);
 
+  // Expense stats
   document.getElementById('stat-month').textContent   = fmt(sum(mE));
-  document.getElementById('stat-week').textContent    = fmt(sum(wE));
   document.getElementById('stat-entries').textContent = mE.length+' entries this month';
 
+  // Sales stats
+  const mS = salesData.filter(s=>new Date(s.date)>=soM);
+  const totalSales = mS.reduce((s,d)=>s+d.total,0);
+  document.getElementById('stat-sales').textContent     = fmt(totalSales);
+  document.getElementById('stat-sales-days').textContent = mS.length+' day'+(mS.length!==1?'s':'')+' recorded';
+
+  // Prime cost
+  const foodCost  = mE.filter(e=>e.category==='Food & Ingredients').reduce((s,e)=>s+e.amount,0);
+  const mL        = laborData.filter(d=>new Date(d.date)>=soM);
+  const laborCost = mL.reduce((s,d)=>s+d.total,0);
+  const primePct  = totalSales>0 ? ((foodCost+laborCost)/totalSales)*100 : null;
+  const primeEl   = document.getElementById('stat-prime');
+  if (primePct!==null) {
+    primeEl.textContent  = primePct.toFixed(1)+'%';
+    primeEl.className    = 'stat-value '+(primePct<=55?'cost-pct-good':primePct<=60?'cost-pct-warn':'cost-pct-bad');
+  } else {
+    primeEl.textContent  = '—';
+    primeEl.className    = 'stat-value';
+  }
+
+  // Top category
   const bycat  = byCat(mE);
   const sorted = Object.entries(bycat).sort((a,b)=>b[1]-a[1]);
   const grand  = sum(mE);
-
   if (sorted.length) {
     document.getElementById('stat-top-cat').textContent = sorted[0][0];
     document.getElementById('stat-top-amt').textContent = fmt(sorted[0][1])+' this month';
   }
 
+  // Breakdown bars
   const maxV = sorted.length ? sorted[0][1] : 1;
   document.getElementById('breakdown-bars').innerHTML = sorted.length
     ? sorted.map(([cat,total])=>{
@@ -1314,8 +1521,41 @@ function refreshDashboard() {
           <div class="bar-track"><div class="bar-fill ${c.bar}" style="width:${Math.round(total/maxV*100)}%"></div></div>
         </div>`;
       }).join('')
-    : '<div style="color:var(--warm-gray);font-size:13px">No data yet</div>';
+    : '<div style="color:var(--warm-gray);font-size:13px;font-weight:600">No data yet</div>';
 
+  // Alerts
+  const alerts = [];
+  // Unmatched ingredients
+  const allItems = entries.flatMap(e=>(e.items||[]).map(i=>i.name)).filter(Boolean);
+  const masterNames = ingredients.map(i=>i.name.toLowerCase());
+  const allAliases  = ingredients.flatMap(i=>(i.aliases||[]).map(a=>a.toLowerCase()));
+  const unmatched   = [...new Set(allItems.filter(n=>!masterNames.includes(n.toLowerCase())&&!allAliases.includes(n.toLowerCase())))];
+  if (unmatched.length)
+    alerts.push({icon:'⚠️', text:`${unmatched.length} invoice item${unmatched.length!==1?'s':''} not mapped to ingredients`, action:()=>showModule('menu',document.querySelector('.mod-tab:nth-child(3)'))&&showView('ingredients',null,'menu'), cls:''});
+  // Missing sales days this week
+  const thisWeekDays = [];
+  for(let i=6;i>=0;i--){ const d=new Date(now);d.setDate(now.getDate()-i);thisWeekDays.push(d.toISOString().split('T')[0]); }
+  const salesDays = new Set(salesData.map(s=>s.date));
+  const missingSalesDays = thisWeekDays.filter(d=>!salesDays.has(d)&&d<=today());
+  if (missingSalesDays.length>0&&totalSales===0)
+    alerts.push({icon:'💰', text:`No sales data recorded this month — import from Toast`, action:()=>showModule('performance',document.querySelector('.mod-tab:nth-child(4)')), cls:''});
+  // Month approaching end
+  const daysLeft = new Date(now.getFullYear(),now.getMonth()+1,0).getDate() - now.getDate();
+  if (daysLeft<=3&&!isLocked&&mE.length>0)
+    alerts.push({icon:'🔒', text:`${daysLeft} day${daysLeft!==1?'s':''} left in the month — ready to close?`, action:()=>showModule('finances',document.querySelector('.mod-tab:nth-child(2)'))&&showView('reports',null,'finances'), cls:''});
+  // Prime cost warning
+  if (primePct!==null&&primePct>60)
+    alerts.push({icon:'🚨', text:`Prime cost at ${primePct.toFixed(1)}% — above the 60% threshold`, action:()=>showModule('performance',document.querySelector('.mod-tab:nth-child(4)')), cls:'red'});
+
+  const alertsEl = document.getElementById('dash-alerts');
+  alertsEl.innerHTML = alerts.map(a=>`
+    <div class="dash-alert ${a.cls}" onclick="(${a.action.toString()})()">
+      <span class="dash-alert-icon">${a.icon}</span>
+      <span class="dash-alert-text">${a.text}</span>
+      <span class="dash-alert-arrow">›</span>
+    </div>`).join('');
+
+  // Recent entries
   const recent = [...entries].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
   document.getElementById('recent-list').innerHTML = recent.length
     ? recent.map(eCard).join('')
