@@ -323,7 +323,7 @@
   .stat-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
   .stat-card.full { grid-column: 1 / -1; }
   .stat-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 6px; }
-  .stat-value { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; }
+  .stat-value { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; }
   .stat-sub { font-size: 11px; color: var(--warm-gray); margin-top: 3px; }
 
   .breakdown { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 20px; box-shadow: var(--shadow); }
@@ -334,7 +334,7 @@
   .bar-amount { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--warm-gray); }
   .bar-track { height: 6px; background: #EDE8DF; border-radius: 3px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
-  .bar-food { background: var(--gold); } .bar-staff { background: #5B8DB8; } .bar-utilities { background: #7DBD8A; }
+  .bar-food { background: var(--red); } .bar-staff { background: #5B8DB8; } .bar-utilities { background: #27AE60; }
   .bar-equipment { background: #C9856A; } .bar-drinks { background: #A67BB5; } .bar-other { background: var(--warm-gray); }
 
   .entries-list { display: flex; flex-direction: column; gap: 8px; }
@@ -345,63 +345,11 @@
   .icon-equipment{background:#FDEBD0;} .icon-drinks{background:#E8DAEF;} .icon-other{background:#EDE8DF;}
   .entry-info { flex: 1; min-width: 0; }
   .entry-supplier { font-weight: 500; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .entry-meta { font-size: 11px; color: var(--warm-gray); margin-top: 2px; }
-  .entry-amount { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; flex-shrink: 0; }
-
-  /* DELETE / EDIT ACTIONS */
-  .entry-card-wrap { position: relative; overflow: hidden; border-radius: 10px; margin-bottom: 0; }
-  .entry-actions { position: absolute; right: 0; top: 0; bottom: 0; display: flex; align-items: stretch; transform: translateX(100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); }
-  .entry-actions.visible { transform: translateX(0); }
-  .entry-action-btn { border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0 18px; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; transition: filter 0.15s; }
-  .entry-action-btn:hover { filter: brightness(0.9); }
-  .btn-edit-entry  { background: #5B8DB8; color: white; }
-  .btn-del-entry   { background: var(--red);  color: white; }
-  .entry-action-icon { font-size: 16px; }
-  .entry-card.has-actions { border-radius: 10px 0 0 10px; cursor: pointer; user-select: none; }
-  .entry-card.active-actions { box-shadow: none; transform: none; border-color: transparent; }
-
-  .scan-zone { background: white; border: 2px dashed var(--gold); border-radius: 16px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
-  .scan-zone:hover { background: #FFFBF2; }
-  .scan-icon { font-size: 40px; margin-bottom: 12px; }
-  .scan-title { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 6px; }
-  .scan-hint { font-size: 12px; color: var(--warm-gray); line-height: 1.5; }
-  #fileInput { display: none; }
-  .camera-btn { background: var(--ink); color: var(--cream); border: none; border-radius: 10px; padding: 14px 24px; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; transition: background 0.2s; }
-  .camera-btn:hover { background: var(--charcoal); }
-
-  .ai-result { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; display: none; }
-  .ai-result.show { display: block; animation: fadeIn 0.3s ease; }
-  .ai-result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-  .ai-badge { background: var(--ink); color: var(--gold); font-size: 10px; font-weight: 500; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 4px; }
-  .ai-status { font-size: 12px; color: var(--warm-gray); }
-
-  .form-grid { display: flex; flex-direction: column; gap: 14px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  label { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--warm-gray); font-weight: 500; }
-  input, select, textarea { background: #FAF7F2; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); transition: border-color 0.2s; width: 100%; }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); background: white; }
-  textarea { resize: vertical; min-height: 70px; }
-  .preview-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 16px; max-height: 220px; object-fit: cover; }
-
-  .btn-primary { background: var(--gold); color: var(--ink); border: none; border-radius: 10px; padding: 14px 24px; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 4px; }
-  .btn-primary:hover { background: #B8943E; }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-secondary { background: transparent; color: var(--warm-gray); border: 1px solid var(--border); border-radius: 10px; padding: 12px 24px; width: 100%; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
-  .btn-secondary:hover { border-color: var(--ink); color: var(--ink); }
-
-  .quick-cats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
-  .quick-cat { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
-  .quick-cat:hover, .quick-cat.selected { border-color: var(--gold); background: #FFFBF2; }
-  .quick-cat-icon { font-size: 22px; margin-bottom: 4px; }
-  .quick-cat-name { font-size: 11px; font-weight: 500; color: var(--charcoal); }
-
-  .period-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .period-tab { padding: 8px 16px; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; background: white; }
-  .period-tab.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .entry-meta { font-size: 11px; color: var(--warm-gray); margin-top: 2px; font-weight: 600; }
+  .entry-amount { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 700; flex-shrink: 0; color: var(--red); }
 
   .report-table { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 16px; }
-  .report-table-header { display: grid; grid-template-columns: 1fr auto auto auto; padding: 10px 16px; background: var(--charcoal); color: var(--cream); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; gap: 8px; }
+  .report-table-header { display: grid; grid-template-columns: 1fr auto auto auto; padding: 10px 16px; background: var(--red); color: white; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; gap: 8px; font-weight: 800; }
   .report-row { display: grid; grid-template-columns: 1fr auto auto auto; padding: 12px 16px; border-bottom: 1px solid var(--border); gap: 8px; align-items: center; font-size: 13px; }
   .report-row:last-child { border-bottom: none; }
   .report-row:hover { background: #FAF7F2; }
@@ -409,11 +357,11 @@
   .cat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .report-mono { font-family: 'DM Mono', monospace; font-size: 12px; text-align: right; }
   .report-pct { color: var(--warm-gray); }
-  .report-total { display: grid; grid-template-columns: 1fr auto; padding: 14px 16px; background: var(--ink); color: var(--cream); font-weight: 600; }
+  .report-total { display: grid; grid-template-columns: 1fr auto; padding: 14px 16px; background: var(--ink); color: white; font-weight: 800; }
   .report-total-mono { font-family: 'DM Mono', monospace; font-size: 15px; }
 
   .supplier-table { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 16px; }
-  .supplier-header { display: grid; grid-template-columns: 1fr auto auto; padding: 10px 16px; background: var(--charcoal); color: var(--cream); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; gap: 8px; }
+  .supplier-header { display: grid; grid-template-columns: 1fr auto auto; padding: 10px 16px; background: var(--red); color: white; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; gap: 8px; font-weight: 800; }
   .supplier-row { display: grid; grid-template-columns: 1fr auto auto; padding: 11px 16px; border-bottom: 1px solid var(--border); gap: 8px; align-items: center; font-size: 13px; }
   .supplier-row:last-child { border-bottom: none; }
   .supplier-row:hover { background: #FAF7F2; }
@@ -1158,9 +1106,6 @@ async function init() {
   document.getElementById('headerDate').textContent =
     new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
   document.getElementById('m-date').value = today();
-  const k = sessionStorage.getItem('mep_apikey');
-  if (k) document.getElementById('apiKeyInput').value = k;
-
   showLoading(true);
   try {
     await ensureTables();
@@ -1211,6 +1156,7 @@ function showSQLInstructions() {
   `  id text primary key,\n` +
   `  date text, supplier text, category text,\n` +
   `  amount numeric, ref text, notes text, source text,\n` +
+  `  items jsonb default '[]',\n` +
   `  created_at timestamptz default now()\n` +
   `);\n\n` +
   `-- Archive table\n` +
@@ -2232,7 +2178,7 @@ function renderUnmatchedBanner() {
     <div class="unmatched-banner-title">⚠️ ${unmatched.length} invoice item${unmatched.length!==1?'s':''} not yet mapped</div>
     ${unmatched.map(name=>`<div class="unmatched-item">
       <span class="unmatched-raw">${name}</span>
-      <button class="btn-map-it" onclick="openMapModal('${name.replace(/'/,"\\'")}'">Map →</button>
+      <button class="btn-map-it" data-rawname="${name.replace(/"/g,'&quot;')}" onclick="openMapModal(this.getAttribute('data-rawname'))">Map →</button>
     </div>`).join('')}
   </div>`;
 }
@@ -2929,6 +2875,7 @@ async function loadSales() {
       id: r.id, date: r.date, total: parseFloat(r.total)||0,
       covers: r.covers||0, notes: r.notes||'',
       byCategory: r.by_category||{}, topItems: r.top_items||[],
+      byDaypart: r.by_daypart||{}, byDining: r.by_dining||{},
       source: r.source||'manual'
     }));
   } catch(e) { salesData = []; }
@@ -3175,46 +3122,7 @@ function parseToastDining(text) {
   });
   return result;
 }
-function handleSalesCSV(ev) {
-  const file = ev.target.files[0]; if(!file) return;
-
-  // Handle ZIP file (Toast exports as ZIP)
-  if (file.name.endsWith('.zip') || file.type === 'application/zip') {
-    toast('⚠️ Toast exports a ZIP — please unzip it first and upload individual CSV files');
-    // Try to process anyway using FileReader
-    const r = new FileReader();
-    r.onload = async(e) => {
-      // Since we can't unzip in browser easily, prompt user
-      toast('Please unzip the file and upload "Net sales summary.csv" or "Sales by day.csv"');
-    };
-    r.readAsArrayBuffer(file);
-    ev.target.value='';
-    return;
-  }
-
-  const r = new FileReader();
-  r.onload = (e) => {
-    const text = e.target.result;
-    const filename = file.name.toLowerCase();
-    let parsed = null;
-
-    if (filename.includes('sales by day')) {
-      parsed = parseToastSalesByDay(text);
-    } else if (filename.includes('net sales')) {
-      parsed = parseToastNetSales(text);
-    } else if (filename.includes('sales category')) {
-      parsed = parseToastSalesCategory(text);
-    } else {
-      // try all parsers
-      parsed = parseToastSalesByDay(text) || parseToastNetSales(text);
-    }
-
-    if (parsed) { pendingSalesImport = parsed; showSalesImportPreview(parsed); }
-    else { toast('Could not read this CSV — try "Sales by day.csv" from the ZIP'); }
-  };
-  r.readAsText(file);
-  ev.target.value='';
-}
+// handleSalesCSV is defined above via handleSalesCSVMultiple
 
 // Parse "Sales by day.csv" — format: yyyyMMdd, Net sales, Total orders, Total guests
 function parseToastSalesByDay(text) {
@@ -3325,10 +3233,19 @@ function confirmSalesImport() { _confirmSalesImport(); }
 async function _confirmSalesImport() {
   if (!pendingSalesImport) return;
   const d = pendingSalesImport;
-  const entry = { id:uid(), date:d.date||today(), total:d.total||0, covers:d.covers||0, notes:'', byCategory:d.byCategory||{}, topItems:d.topItems||[], source:d.source||'import' };
+  const entry = {
+    id:uid(), date:d.date||today(), total:d.total||0, covers:d.covers||0,
+    notes:'', byCategory:d.byCategory||{}, topItems:d.topItems||[],
+    byDaypart:d.byDaypart||{}, byDining:d.byDining||{},
+    source:d.source||'import'
+  };
   showLoading(true);
   try {
-    await sbInsert('tp_sales',{id:entry.id,date:entry.date,total:entry.total,covers:entry.covers,notes:entry.notes,by_category:entry.byCategory,top_items:entry.topItems,source:entry.source});
+    await sbInsert('tp_sales',{
+      id:entry.id, date:entry.date, total:entry.total, covers:entry.covers,
+      notes:entry.notes, by_category:entry.byCategory, top_items:entry.topItems,
+      by_daypart:entry.byDaypart, by_dining:entry.byDining, source:entry.source
+    });
     salesData.unshift(entry);
     closeSalesImportModal(); refreshSales(); toast('✓ Sales imported!');
   } catch(e) { toast('Error: '+e.message); }
@@ -3338,9 +3255,49 @@ async function _confirmSalesImport() {
 function openSalesDayDetail(id) {
   const s = salesData.find(x=>x.id===id);
   if (!s) return;
-  const cats = Object.entries(s.byCategory||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700">${k}</span><span style="font-family:'DM Mono',monospace;color:var(--green)">${fmt(v)}</span></div>`).join('');
-  const items = (s.topItems||[]).map(i=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700">${i.name}</span><span style="font-size:12px;color:var(--warm-gray);font-weight:600">×${i.qty}${i.revenue?' · '+fmt(i.revenue):''}</span></div>`).join('');
-  alert(`${fmtDate(s.date)}\n\nTotal: ${fmt(s.total)}${s.covers?'\nCovers: '+s.covers:''}${s.notes?'\n'+s.notes:''}`);
+  const section = (title, obj) => {
+    const rows = Object.entries(obj||{}).filter(([,v])=>v>0).map(([k,v])=>
+      `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700">${k}</span><span style="font-family:'DM Mono',monospace;color:var(--green)">${fmt(v)}</span></div>`
+    ).join('');
+    if (!rows) return '';
+    return `<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--warm-gray);margin-bottom:6px">${title}</div>${rows}</div>`;
+  };
+  // Build a quick modal
+  const existing = document.getElementById('salesDetailModal');
+  if (existing) existing.remove();
+  const modal = document.createElement('div');
+  modal.id = 'salesDetailModal';
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="this.closest('#salesDetailModal').remove()">
+      <div class="modal">
+        <button class="modal-close" onclick="document.getElementById('salesDetailModal').remove()">✕</button>
+        <div class="modal-title">${fmtDate(s.date)}</div>
+        <div class="modal-sub">${s.source} · ${s.covers?s.covers+' guests':''}${s.notes?' · '+s.notes:''}</div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px">
+          <div style="font-size:32px;font-weight:900;color:var(--green)">${fmt(s.total)}</div>
+          <div style="font-size:11px;color:var(--warm-gray);font-weight:600;margin-top:4px">Net Sales</div>
+        </div>
+        ${section('By Daypart', s.byDaypart)}
+        ${section('By Dining Option', s.byDining)}
+        ${section('By Sales Category', s.byCategory)}
+        <button class="btn-secondary" style="border-color:#FAD7D3;color:var(--red)" onclick="deleteSalesDay('${s.id}')">🗑 Delete this day</button>
+        <button class="btn-secondary" onclick="document.getElementById('salesDetailModal').remove()">Close</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
+
+async function deleteSalesDay(id) {
+  if (!confirm('Delete this sales day?')) return;
+  showLoading(true);
+  try {
+    await sbDelete('tp_sales', id);
+    salesData = salesData.filter(x=>x.id!==id);
+    const m = document.getElementById('salesDetailModal');
+    if (m) m.remove();
+    refreshSales(); toast('🗑 Sales day deleted');
+  } catch(e) { toast('Error: '+e.message); }
+  showLoading(false);
 }
 
 // wire into showView handled above
